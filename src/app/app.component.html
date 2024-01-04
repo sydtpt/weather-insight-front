@@ -1,0 +1,29 @@
+@if (!hasCitySelected) {
+  <div class="p-5">
+    <div class="row justify-content-center p-5">
+      Select city {{hasCitySelected}}
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <a class="card" routerLink="/brussels/dashboard" (click)="hasCitySelected = true" routerLinkActive="active">
+          <img src="assets/img/brussels.jpg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Brussels</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-lg-4">
+        <div class="card">
+          <img src="assets/img/sao_paulo.jpg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">São Paulo</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <router-outlet></router-outlet>
+}

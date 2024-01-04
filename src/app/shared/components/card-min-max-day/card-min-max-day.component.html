@@ -1,0 +1,36 @@
+<div class="card info-card revenue-card">
+  <div class="card-body">
+    <h5 class="card-title">History <span>| This day</span></h5>
+    <div class="row" *ngIf="data$ | async as data">
+      <div class="col-6">
+        <div class="d-flex align-items-center">
+          <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">
+            <span style="font-size: 60px;">🔥</span>
+          </div>
+          <div  class="ps-2">
+            <h6  class="pt-2">{{ data.max }}°C</h6>
+            <div class=" d-flex">
+              <span class="text-success small fw-bold">Max</span>
+              <p class="fw-bold small ps-1">{{ data.maxDay }}</p>
+            </div>
+
+          </div>
+        </div>
+      </div>  
+      <div class="col-6">
+        <div class="d-flex align-items-center">
+          <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">
+            <span style="font-size: 50px;">❄️</span>
+          </div>
+          <div  class="ps-1">
+            <h6  class="pt-2">{{data.min}}°C</h6>
+            <div class=" d-flex">
+              <span class="text-danger small fw-bold">Min</span>
+              <p class="fw-bold small ps-1">{{ data.minDay }}</p>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </div>
+</div>
