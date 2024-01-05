@@ -1,7 +1,7 @@
 <div class="card info-card revenue-card">
   <div class="card-body">
     <h5 class="card-title">History <span>| This day</span></h5>
-    <div class="row" *ngIf="data$ | async as data">
+    <div class="row" *ngIf="!isLoading">
       <div class="col-6">
         <div class="d-flex align-items-center">
           <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">

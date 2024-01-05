@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {
@@ -18,15 +18,17 @@ export class CardSameDayComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
 
-
   constructor(private reportService: ReportsService){
+    effect(() => {
+      let data = this.reportService.rawDataPerDaySignal();
+      let test = !!Object.keys(data).length;
+      if (test) {
+        this.createChart(data)
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.reportService.getHistoricalDDMM()
-      .subscribe(data => {
-        this.createChart(data)
-      })
   }
 
   createChart(data: any){

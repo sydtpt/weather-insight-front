@@ -1,11 +1,18 @@
 <div class="pagetitle">
-  <h1>Today</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
-      <li class="breadcrumb-item active">Today</li>
-    </ol>
-  </nav>
+  <div class="d-flex">
+    <div class="col-10">
+      <h1>Today</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+          <li class="breadcrumb-item active">Today</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="col-2">
+      <input type="date" min="1941-01-01" max="{{getMaxDayForecast()}}" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="changeDay($event)" class="form-control mt-2">
+    </div>
+  </div>
 </div><!-- End Page Title -->
 
 <section class="section dashboard">
