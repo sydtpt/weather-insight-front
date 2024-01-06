@@ -44,7 +44,6 @@ export class TodayComponent {
     }
     const timestamp = new Date(date);
     this.date = new Date(timestamp);
-    this.reportService.getDayForecast(this.date).subscribe();
     this.reportService.getHistoricalDDMM(this.date).subscribe();
   }
 

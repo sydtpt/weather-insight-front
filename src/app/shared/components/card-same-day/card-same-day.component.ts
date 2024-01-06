@@ -62,7 +62,7 @@ export class CardSameDayComponent {
       legend: {
         tooltipHoverFormatter: (val: any, opts: any) => {
           return (
-            val + " - <strong>" + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + "</strong>"
+            val + " - <strong>" + parseFloat(opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex]).toFixed(1) + "</strong>"
           );
         }
       },

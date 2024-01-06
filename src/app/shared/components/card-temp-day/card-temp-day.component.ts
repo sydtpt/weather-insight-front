@@ -70,10 +70,6 @@ export class CardTempDayComponent {
   }
 
   getEmojyByCodeWeatherCode(weather_code?) {
-        debugger
-      // data$["current"].weather_code
-
-
       if (Array.isArray(this.data$["daily"].time)) {
         let time = new Date(this.data$["daily"].time[0] * 1000);
         let today = new Date().toDateString();
@@ -99,11 +95,17 @@ export class CardTempDayComponent {
 
   getMaxTemp(){
     let max = this.data$["daily"].temperature_2m_max;
+    if(!max) {
+      return "N/D"
+    }
     return Array.isArray(max) ? max[0].toFixed() : max.toFixed();
   }
 
   getMinTemp(){
     let min = this.data$["daily"].temperature_2m_min;
+    if(!min) {
+      return "N/D"
+    }
     return Array.isArray(min) ? min[0].toFixed() : min.toFixed();
   }
 }

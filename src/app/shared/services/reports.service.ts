@@ -1,6 +1,6 @@
 import { Injectable, effect, signal } from "@angular/core";
 import { HttpService } from "./http.service";
-import { map, tap } from "rxjs/operators";
+import { map, mergeMap, tap } from "rxjs/operators";
 import { of } from "rxjs";
 import { CityService } from "./city.service";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -79,15 +79,17 @@ latitude={{lat}}&longitude={{long}}
         return temp;
   }
 
-  getDayForecast(date: Date) {
+  getDayForecast(selectedDate: Date) {
     let today = new Date()
     today.setHours(0, 0, 0)
+
     // should get from raw history data if date < today
-    if (date < today) {
-      // this.rawDataPerDaySignal.set(this.rawDataPerDaySignal())
-      return this.getRawDataPerDay(date).pipe(
+    if (false) {
+      
+      return this.getRawDataPerDay(selectedDate).pipe(
         tap((res:any) => {
-          let day = date.toISOString().slice(0,10);
+          debugger
+          let day = selectedDate.toISOString().slice(0,10);
           let values = Object.values(res.date).map((item:any) =>  new Date(item).toISOString().slice(0,10));
           let id = values.findIndex((i:any) => new Date(i).toISOString().slice(0,10) === day)
           let avg = {
@@ -97,7 +99,7 @@ latitude={{lat}}&longitude={{long}}
               sunrise: res.sunrise[id],
               sunset: res.sunset[id],
               apparent_temperature: res.apparent_temperature_mean[id],
-              time: date
+              time: selectedDate
             },
             current: {
               weather_code: res.weather_code[id],
@@ -114,12 +116,18 @@ latitude={{lat}}&longitude={{long}}
     let api = this.forecastApi
       .replace("{{lat}}", coords.latitude)
       .replace("{{long}}", coords.longiture)
-      .replace("{{start_date}}", date.toISOString().split('T')[0])
-      .replace("{{end_date}}", date.toISOString().split('T')[0]);
+      .replace("{{start_date}}", selectedDate.toISOString().split('T')[0])
+      .replace("{{end_date}}", selectedDate.toISOString().split('T')[0]);
     return this.http
       .get(api)
-      .pipe(tap((res) => {
+      .pipe(map((res) => {
+        // add forecast to raw data 
+        // tod
+        debugger
+        this.rawDataFromDay;
+
         this.dayForecastSignal.set(res)
+        return res;
       }));
   }
 
@@ -131,18 +139,42 @@ latitude={{lat}}&longitude={{long}}
       day !== this.currentDD ||
       month !== this.currentMM
     ) {
-      let url = `http://127.0.0.1:5000/api/history/${this.cityService.selectedCity}`;
-      url = (day && month) ? `${url}?dd=${day}&mm=${month}` : url;
+      let url = `http://127.0.0.1:5000/api/history/${this.cityService.selectedCity}?dd=${day}&mm=${month}`;
       return this.http.get(url).pipe(
-        map((res) => {
+        mergeMap((res) => {
           this.currentDD = day;
           this.currentMM = month;
+
+          // check if data of lasts day is missing
+          let index = Object.values(res["apparent_temperature_min"]).lastIndexOf(null);
+          if (index>=0) {
+              return this.getDayForecast(date)
+              .pipe(
+                map((forecastRes: any) => {
+                  res = this.mergeForecastAndRawDay(index, res, forecastRes);
+                  this.rawDataFromDay = res;
+                  this.rawDataPerDaySignal.set(res);
+                  return res;
+                })
+              )
+          }
           this.rawDataFromDay = res;
           this.rawDataPerDaySignal.set(res);
-          return res;
+          return of(res);
         })
       );
     }
     return of(this.rawDataFromDay);
+  }
+
+
+
+  private mergeForecastAndRawDay(index,res, forecastRes) {
+    res["apparent_temperature_min"][index] = forecastRes["daily"]["apparent_temperature_min"];
+    res["apparent_temperature_max"][index] = forecastRes["daily"]["apparent_temperature_max"];
+    res["temperature_2m_max"][index] = forecastRes["daily"]["temperature_2m_max"];
+    res["temperature_2m_min"][index] = forecastRes["daily"]["temperature_2m_min"];
+
+    return res;
   }
 }
