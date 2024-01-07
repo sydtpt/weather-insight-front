@@ -36,14 +36,22 @@ export class DailyHistoryResponse {
     }
   }
 
-  hasMissingData(): number {
-    return this.apparent_temperature_max
-      ? this.apparent_temperature_max.lastIndexOf(-1)
-      : -1;
+  hasMissingData(date): boolean {
+    debugger
+    let hasNull = this.temperature_2m_max.find((k) => {
+      return k == null;
+    });
+    if (hasNull) {
+      return true;
+   
+    }
+    let temp = this.date ? this.date : [];
+    let lastDay = temp ?  new Date(temp[ temp.length -1]) : new Date();
+    return lastDay.getFullYear() !== new Date().getFullYear();
+    
   }
 
   getForecastFromDate(date: Date): ForecastResponse {
-    debugger;
     let index = this.date?.findIndex(
       (item) => new Date(item).toDateString() === date.toDateString()
     );

@@ -4,6 +4,7 @@ import { RouterOutlet } from "@angular/router";
 import { ReportsService } from "../../services/today.service";
 import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
 import { ForecastResponse } from "../../models/forecast-response.model";
+import { Moon } from "lunarphase-js";
 
 @Component({
   selector: "app-card-temp-day",
@@ -43,7 +44,6 @@ export class CardTempDayComponent {
 
 
   getWind() {
-    // is from today*
     return this.data.current.wind_speed_10m.toFixed();
   }
 
@@ -67,4 +67,46 @@ export class CardTempDayComponent {
     const formattedDate = `${day}, ${month}`;
     return formattedDate;
   }
+
+  get sunset(){
+    if(this.data.daily) {
+      const data = new Date(this.data.daily.sunset[0] * 1000); // Multiplica por 1000 para converter para milissegundos
+      const hours = ('0' + data.getHours()).slice(-2); // Obter as horas e formatar para 2 dígitos
+      const minutes = ('0' + data.getMinutes()).slice(-2); // Obter os minutos e formatar para 2 dígitos
+
+      return `${hours}:${minutes}`
+    } else {
+      return "";
+    }
+  }
+
+  get sunrise(){
+    if(this.data.daily) {
+      const data = new Date(this.data.daily.sunrise[0] * 1000); // Multiplica por 1000 para converter para milissegundos
+      const hours = ('0' + data.getHours()).slice(-2); // Obter as horas e formatar para 2 dígitos
+      const minutes = ('0' + data.getMinutes()).slice(-2); // Obter os minutos e formatar para 2 dígitos
+
+      return `${hours}:${minutes}`
+    } else {
+      return "";
+    }
+  }
+
+  get humidity(){
+    if(this.data.current.relative_humidity_2m) {
+      return this.data.current.relative_humidity_2m;
+    } else {
+      return false;
+    }
+  }
+
+
+  getMoonPhaseDescription() {
+    return Moon.lunarPhase(new Date(this.data.current.time *1000));
+  }
+
+  getMoonPhaseEmoji() {
+    return Moon.lunarPhaseEmoji(new Date(this.data.current.time *1000));
+  }
+
 }

@@ -84,17 +84,18 @@ latitude={{lat}}&longitude={{long}}
         this.currentDD = day;
         this.currentMM = month;
         // check if data of last day is missing
-        let index = res.hasMissingData();
         
         // if day is near get from getDayForecast instead of history
         const dateLimit = new Date();
         dateLimit.setHours(0,0,0);
         dateLimit.setDate(dateLimit.getDate() - 4);
-        if (index >= 0 || newDate >= dateLimit) {
+        if (newDate >= dateLimit) {
           return this.getDayForecast(newDate).pipe(
             map((forecastRes: ForecastResponse) => {
-              if (newDate < dateLimit) {
-                res = this.mergeForecastAndRawDay(index, res, forecastRes);
+              let today = new Date();
+
+              if (res.hasMissingData(newDate) && newDate < today) {
+                res = this.mergeForecastAndRawDay(res, forecastRes);
               }
               this.rawDataFromDay = res;
               this.rawDataPerDaySignal.set(res);
@@ -110,11 +111,12 @@ latitude={{lat}}&longitude={{long}}
     );
   }
 
-  private mergeForecastAndRawDay(index: number, res: DailyHistoryResponse, forecastRes: ForecastResponse) {
-    res["apparent_temperature_min"][index] = forecastRes.daily.apparent_temperature_min[0];
-    res["apparent_temperature_max"][index] = forecastRes.daily.apparent_temperature_max[0];
-    res["temperature_2m_max"][index] = forecastRes.daily.temperature_2m_max[0];
-    res["temperature_2m_min"][index] = forecastRes.daily.temperature_2m_min[0];
+  private mergeForecastAndRawDay(res: DailyHistoryResponse, forecastRes: ForecastResponse) {
+    res.apparent_temperature_max.push(forecastRes.daily.apparent_temperature_max[0]);
+    res.apparent_temperature_min.push(forecastRes.daily.apparent_temperature_min[0]);
+    res.temperature_2m_max.push(forecastRes.daily.temperature_2m_max[0]);
+    res.temperature_2m_min.push(forecastRes.daily.temperature_2m_min[0]);
+    res.date?.push(forecastRes.daily.time[0]*1000)
     return res;
   }
 }

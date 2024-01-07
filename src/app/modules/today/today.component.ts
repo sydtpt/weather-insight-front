@@ -21,6 +21,7 @@ const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayCompon
 })
 export class TodayComponent {
   date = new Date();
+  formattedDate: string;
   private readonly maxDate = new Date(this.date);
 
 
@@ -29,6 +30,7 @@ export class TodayComponent {
   }
   ngOnInit() {
     this.maxDate.setDate(this.date.getDate() + 7);
+    this.formattedDate = this.getDateFormatted(this.date);
     this.reportService.getDayForecast(this.date).subscribe();
     this.reportService.getHistoricalDDMM(this.date).subscribe();
   }
@@ -44,6 +46,7 @@ export class TodayComponent {
     }
     const timestamp = new Date(date);
     this.date = new Date(timestamp);
+    this.formattedDate = this.getDateFormatted(this.date);
     this.reportService.getHistoricalDDMM(this.date).subscribe();
   }
 
@@ -51,6 +54,34 @@ export class TodayComponent {
     return this.maxDate.toISOString().split('T')[0];
   }
 
+  disableNext():boolean {
+    let date = new Date(this.date);
+    date.setHours(0,0,0);
+    let maxDate = new Date(this.maxDate);
+    maxDate.setHours(0,0,0);
+    return this.date >= maxDate;
+  }
+
+  previousDay() {
+    let newDay = new Date(this.date);
+    newDay.setDate(this.date.getDate() - 1);
+    this.formattedDate = this.getDateFormatted(newDay);
+    this.changeDay(this.formattedDate);
+  }
+
+  nextDay(){
+    let newDay = new Date(this.date);
+    newDay.setDate(this.date.getDate() + 1);
+    this.formattedDate = this.getDateFormatted(newDay);
+    this.changeDay(this.formattedDate);
+  }
+
+  getDateFormatted(date: Date){
+    const ano = date.getFullYear();
+    const mes = ('0' + ( date.getMonth() + 1)).slice(-2); // Adiciona 1 ao mês (pois janeiro é 0) e formata para 2 dígitos
+    const dia = ('0' +  date.getDate()).slice(-2); // Formata para 2 dígitos
+    return `${ano}-${mes}-${dia}`;
+  }
 
 
 }

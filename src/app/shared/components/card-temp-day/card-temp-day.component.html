@@ -2,7 +2,7 @@
   <div class="card-body"  *ngIf="data">
     <h5 class="card-title" >Temperature <span>| {{getTodayDescription()}}</span></h5>
     <div class="d-flex row">
-      <div class="col-6">
+      <div class="col-7">
         <div class="d-flex" >
           <div class="col-5" style="text-align: -webkit-right;">
             <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">
@@ -14,28 +14,42 @@
             <div class=" d-flex">
               <span class="d-flex">🌡️ <h4 class="text-muted fs-5 ps-2 d-flex">{{getFeelsLike()}}°</h4></span>
             </div>
-            <div class="d-flex justify-content-center">
-            </div>
           </div>
         </div>
         <div class="pt-2" >
         </div>
-        <div class="d-flex justify-content-center" *ngIf="getWind()">
-          <h5 class="ps-2 fs-6">🍃{{getWind()}} km/h</h5>
+        <div class="d-flex row ">
+          <h5 class="ps-2 d-flex justify-content-center" *ngIf="getWind()">
+            <div>🍃{{getWind()}} km/h</div>
+          </h5>
+          <div class="d-flex ps-sm-0 ps-md-4">
+            <div class="ps-1">
+              <span style="font-size: 50px;">{{getMoonPhaseEmoji()}}</span>
+            </div>
+            <div class="col-6 d-flex align-items-center justify-content-left">
+              <h6 class="text-muted text-sx-start ps-4 fs-4">{{getMoonPhaseDescription()}}</h6>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-6 d-flex row align-content-center">
+      <div class="col-5 d-flex row align-content-center">
         <div class="d-flex justify-content-center">
           🔥<h4 class="ps-2">{{ getMaxTemp() }}° max</h4>
         </div>
         <div class="d-flex justify-content-center">
           ❄️<h4 class="ps-2">{{ getMinTemp() }}° min</h4>
         </div>
+        <div class="d-flex justify-content-center" *ngIf="humidity">
+          💧<h4 class="ps-2">{{humidity}}%</h4>
+        </div>
         <div class="d-flex justify-content-center">
-          💧<h4 class="ps-2">{{data["current"].relative_humidity_2m}}%</h4>
-          
+          🌅<h4 class="ps-2">{{sunrise}}</h4>
+        </div>
+        <div class="d-flex justify-content-center">
+          🌃<h4 class="ps-2">{{sunset}}</h4>
         </div>
       </div>
+            
     </div>
   </div>
 </div>

@@ -36,7 +36,7 @@ export class AppComponent {
   }
 
   goToCityDashboard(city_code) {
-      this.cityService.selectedCity = city_code;
+    this.cityService.selectedCity = city_code;
     this.hasCitySelected = true;
     this.router.navigate(["/", city_code]);
   }
