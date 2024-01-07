@@ -10,7 +10,7 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard', component: DashBoardComponent },
             { path: 'today', component: TodayComponent },
-            { path: '**',   redirectTo: 'dashboard', pathMatch: 'full' }
+            { path: '**',   redirectTo: 'today', pathMatch: 'full' }
         ], 
     },
     { path: '**',   redirectTo: '', pathMatch: 'full' },  // Wildcard route for a 404 page

@@ -5,7 +5,7 @@ import {
   ChartComponent,
   NgApexchartsModule
 } from "ng-apexcharts";
-import { ReportsService } from '../../services/reports.service';
+import { ReportsService } from '../../services/today.service';
 
 @Component({
   selector: 'app-card-same-day',
@@ -18,12 +18,14 @@ export class CardSameDayComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
 
+  data$;
+
   constructor(private reportService: ReportsService){
     effect(() => {
-      let data = this.reportService.rawDataPerDaySignal();
-      let test = !!Object.keys(data).length;
+      this.data$ = this.reportService.rawDataPerDaySignal();
+      let test = !!Object.keys(this.data$).length;
       if (test) {
-        this.createChart(data)
+        this.createChart(this.data$)
       }
     });
   }
@@ -98,5 +100,16 @@ export class CardSameDayComponent {
     };
   }
   
+
+  getTodayDescription() {
+    if(!this.data$ || !this.data$["date"]) {
+      return "";
+    }
+    const date = new Date(this.data$["date"][0])
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const formattedDate = `${day}, ${month}`;
+    return `Every ${formattedDate} since 1940`;
+  }
 }
 

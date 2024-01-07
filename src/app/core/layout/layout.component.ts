@@ -14,7 +14,7 @@ import { CityService } from '../../shared/services/city.service';
     imports: [CommonModule, RouterOutlet, HeaderComponent, SideBarComponent, FooterComponent]
 })
 export class LayoutComponent {
-  title = 'weather-insight-front';
+
 
   constructor(public cityService: CityService, private router: Router ) {
 
@@ -22,11 +22,8 @@ export class LayoutComponent {
 
 
   ngOnInit() {
-    let urlsData = window.location.href.split("/").filter(e => e);
-    if(urlsData.length > 2 && this.cityService.exist(urlsData[2])) {
-        this.cityService.selectedCity = urlsData[2];
-    } else {
-      this.router.navigateByUrl("/");
-    }
+    this.router.routeReuseStrategy.shouldReuseRoute = () => {
+      return false;
+    };
   }
 }

@@ -9,11 +9,8 @@
 
   <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center">
-      <select class="form-select" aria-label="Default select example pw-4">
-        <option selected>Change city</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
+      <select  [(ngModel)]="currentCity" class="form-select" aria-label="Default select example pw-4" (change)='changeCity($event)'>
+        <option [selected]="city.city_code === currentCity" *ngFor="let city of cities" [value]="city.city_code">{{city.city_desc}}</option>
       </select>
     </ul>
   </nav><!-- End Icons Navigation -->

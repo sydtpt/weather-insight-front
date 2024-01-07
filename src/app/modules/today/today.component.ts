@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { CardSameDayComponent } from '../../shared/components/card-same-day/card-same-day.component';
 import { CityService } from '../../shared/services/city.service';
-import { ReportsService } from '../../shared/services/reports.service';
+import { ReportsService } from '../../shared/services/today.service';
 import { CardMinMaxDayComponent } from '../../shared/components/card-min-max-day/card-min-max-day.component';
 import { CardMoonPhaseComponent } from '../../shared/components/card-moon-phase/card-moon-phase.component';
 import { CardTempDayComponent } from '../../shared/components/card-temp-day/card-temp-day.component';
@@ -20,17 +20,17 @@ const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayCompon
   styleUrl: './today.component.less'
 })
 export class TodayComponent {
-  title = 'weather-insight-front';
-
   date = new Date();
   private readonly maxDate = new Date(this.date);
+
+
   constructor(private reportService: ReportsService){
-    this.reportService.getDayForecast(this.date).subscribe();
-    this.reportService.getHistoricalDDMM(this.date).subscribe();
+
   }
   ngOnInit() {
-    this.maxDate.setDate(this.date.getDate() + 7)
-    console.log(this.maxDate)
+    this.maxDate.setDate(this.date.getDate() + 7);
+    this.reportService.getDayForecast(this.date).subscribe();
+    this.reportService.getHistoricalDDMM(this.date).subscribe();
   }
 
   changeDay(date) {

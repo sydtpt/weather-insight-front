@@ -1,24 +1,14 @@
 import { Injectable } from '@angular/core';
+import { HttpService } from './http.service';
+import { tap } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class CityService {
 
-    cities = [{
-        city_code: "brussels",
-        description: "Bruxelas",
-        img: "assets/img/brussels.jpg",
-        latitude: 50.8505,
-        longiture: 4.3488,
-    },{
-        city_code: "sao_paulo",
-        description: "São Paulo",
-        img: "assets/img/brussels.jpg",
-        longiture: 0,
-        latitude: 0
-    }];
+    cities:any = [];
 
     public selectedCity = "";
-    constructor() { }
+    constructor(private httpService: HttpService) { }
 
 
     public exist(city_code: string){
@@ -30,10 +20,14 @@ export class CityService {
             city_code = this.selectedCity
         }
         let temp: any = this.cities.find(i => i.city_code === city_code);
-        temp = temp ? temp : {latitude: 0, longiture: 0};
+        temp = temp ? temp : {latitude: 0, longitude: 0};
         return {
             latitude: temp.latitude,
-            longiture: temp.longiture
+            longiture: temp.longitude
         };
+    }
+
+    getCities() {
+        return this.httpService.get("cities").pipe(tap(cities => this.cities = cities["cities"]))
     }
 }

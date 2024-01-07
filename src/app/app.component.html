@@ -4,8 +4,8 @@
       Select city {{hasCitySelected}}
     </div>
     <div class="row justify-content-center">
-      <div class="col-lg-4">
-        <a class="card" routerLink="/brussels/dashboard" (click)="hasCitySelected = true" routerLinkActive="active">
+      <div class="col-lg-4"  (click)="goToCityDashboard('brussels')">
+        <a class="card" (click)="goToCityDashboard('brussels');" routerLinkActive="active">
           <img src="assets/img/brussels.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Brussels</h5>

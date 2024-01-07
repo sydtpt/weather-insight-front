@@ -1,7 +1,7 @@
 import { Component, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ReportsService } from '../../services/reports.service';
+import { ReportsService } from '../../services/today.service';
 import { CityService } from '../../services/city.service';
 import { Observable } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
