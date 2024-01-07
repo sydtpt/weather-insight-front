@@ -30,4 +30,9 @@ export class CityService {
     getCities() {
         return this.httpService.get("cities").pipe(tap(cities => this.cities = cities["cities"]))
     }
+
+    getTimeZone() {
+        let temp: any = this.cities.find(i => i.city_code === this.selectedCity);
+        return temp ? temp.timezone : "";
+    }
 }

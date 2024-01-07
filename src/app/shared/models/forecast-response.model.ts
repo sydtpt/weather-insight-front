@@ -37,7 +37,6 @@ export class DailyHistoryResponse {
   }
 
   hasMissingData(date): boolean {
-    debugger
     let hasNull = this.temperature_2m_max.find((k) => {
       return k == null;
     });

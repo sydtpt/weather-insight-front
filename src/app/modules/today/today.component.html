@@ -1,6 +1,6 @@
 <div class="pagetitle">
   <div class="d-flex">
-    <div class="col-5 col-md-9 ">
+    <div class="col-5 col-md-8 ">
       <h1>Today</h1>
       <nav>
         <ol class="breadcrumb">
@@ -9,7 +9,7 @@
         </ol>
       </nav>
     </div>
-    <div class="col-7 d-flex col-md-3 mt-2 mb-3 justify-content-end form-group">
+    <div class="col-7 d-flex col-md-4 mt-2 mb-3 justify-content-end form-group">
       <button (click)="previousDay()" type="button" class="btn btn-primary btn-sm  d-none d-md-block"><i class="bi bi-arrow-left"></i></button>
       <input type="date" min="1941-01-01" max="{{getMaxDayForecast()}}" [ngModel]="formattedDate" (ngModelChange)="changeDay($event)" class="form-control ms-1 me-1 w-75">
       <button (click)="nextDay()" [disabled]="disableNext()" class="btn btn-primary btn-sm  d-none d-md-block" ><i class="bi bi-arrow-right"></i></button>

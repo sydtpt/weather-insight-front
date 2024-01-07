@@ -5,6 +5,7 @@ import { ReportsService } from "../../services/today.service";
 import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
 import { ForecastResponse } from "../../models/forecast-response.model";
 import { Moon } from "lunarphase-js";
+import { CityService } from "../../services/city.service";
 
 @Component({
   selector: "app-card-temp-day",
@@ -17,7 +18,7 @@ export class CardTempDayComponent {
 
 
   data: ForecastResponse;
-  constructor(private reportsService: ReportsService) {
+  constructor(private reportsService: ReportsService, private cityService: CityService) {
     effect(() => {
       let data = this.reportsService.dayForecastSignal();
       let test = !!Object.keys(data).length;
@@ -70,11 +71,9 @@ export class CardTempDayComponent {
 
   get sunset(){
     if(this.data.daily) {
-      const data = new Date(this.data.daily.sunset[0] * 1000); // Multiplica por 1000 para converter para milissegundos
-      const hours = ('0' + data.getHours()).slice(-2); // Obter as horas e formatar para 2 dígitos
-      const minutes = ('0' + data.getMinutes()).slice(-2); // Obter os minutos e formatar para 2 dígitos
-
-      return `${hours}:${minutes}`
+      let sunset = new Date(this.data.daily.sunset[0]*1000);
+      console.log(this.cityService.getTimeZone())
+      return sunset.toLocaleString("pt-BR",{ timeZone: this.cityService.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
     }
@@ -82,11 +81,9 @@ export class CardTempDayComponent {
 
   get sunrise(){
     if(this.data.daily) {
-      const data = new Date(this.data.daily.sunrise[0] * 1000); // Multiplica por 1000 para converter para milissegundos
-      const hours = ('0' + data.getHours()).slice(-2); // Obter as horas e formatar para 2 dígitos
-      const minutes = ('0' + data.getMinutes()).slice(-2); // Obter os minutos e formatar para 2 dígitos
-
-      return `${hours}:${minutes}`
+      let sunrise = new Date(this.data.daily.sunrise[0]*1000);
+      debugger
+      return sunrise.toLocaleString("pt-BR",{ timeZone: this.cityService.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
     }
