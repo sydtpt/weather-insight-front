@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { CardBarComponent } from '../../shared/components/card-bar/card-bar.component';
 import { DailyStore } from '../../store/daily-data.store';
 import { patchState } from '@ngrx/signals';
-import { DailyHistoryResponse, ForecastResponse } from '../../shared/models/forecast-response.model';
+import { DailyHistoryResponse } from '../../shared/models/forecast-response.model';
 
 const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayComponent, CardTempDayComponent, CardBarComponent];
 
@@ -27,6 +27,9 @@ export class TodayComponent {
   private readonly maxDate = new Date(this.date);
   private dailyStore = inject(DailyStore);
   data: DailyHistoryResponse;
+  precipitationSeries = [{key: "precipitation_sum", description: "precipitation" }, {key: "rain_sum", description: "rain" }];
+
+
   constructor(){
     effect(()=>{
       this.date = this.dailyStore.date();

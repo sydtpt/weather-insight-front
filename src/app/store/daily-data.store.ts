@@ -53,70 +53,12 @@ export const DailyStore = signalStore(
         return {max: 0, date: new Date()}
     }
      ),
-    // TO DO
   })),
 
   withMethods((store, cityService = inject(ReportsService)) => {
     return {
-      async getHistoricalDDMM(date: Date, city?: City) {
-        if (!city) {
-          city = store.city();
-        }
-        let call = cityService.getDataPerDay(date, city).pipe(
-          mergeMap((res) => {
-            let day = date.getDate();
-            let month = date.getMonth() + 1;
-            this.currentDD = day;
-            this.currentMM = month;
-            // check if data of last day is missing
-            // if day is near get from getDayForecast instead of history
-            const dateLimit = new Date();
-            dateLimit.setHours(0, 0, 0);
-            dateLimit.setDate(dateLimit.getDate() - 4);
-            if (date >= dateLimit) {
-              patchState(store, { values: res });
-              return cityService.getDayForecast(date, store.city.latitude(), store.city.longitude()).pipe(
-                map((res) => {
-                  const today = new Date();
-                  const isToday =
-                    today.getFullYear() === date.getFullYear() &&
-                    today.getMonth() === date.getMonth() &&
-                    today.getDate() === date.getDate();
-
-                  if (!isToday) {
-                    res.current.time = date.getTime() / 1000;
-                    let mean = res.daily.temperature_2m_mean
-                      ? res.daily.temperature_2m_mean[0]
-                      : (res.daily.temperature_2m_max[0] +
-                          res.daily.temperature_2m_min[0]) /
-                        2;
-                    res.current.temperature_2m = mean;
-
-                    let feelsLike = res.daily.apparent_temperature_mean
-                      ? res.daily.apparent_temperature_mean[0]
-                      : (res.daily.apparent_temperature_max[0] +
-                          res.daily.apparent_temperature_min[0]) /
-                        2;
-                    res.current.apparent_temperature = feelsLike;
-                  }
-                  return res;
-                }),
-                map((forecastRes: ForecastResponse) => {
-                  let today = new Date();
-                  if (res.hasMissingData() && date < today) {
-                    res = mergeForecastToRawDay(res, forecastRes);
-                  }
-                  patchState(store, { forecast: forecastRes });
-                  res["forecast"] = forecastRes;
-                  return res;
-                })
-              );
-            }
-            patchState(store, { forecast: res.getForecastFromDate(date) });
-            patchState(store, { values: res });
-            return of(res);
-          })
-        );
+      async getHistoricalDDMM(date: Date) {
+        let call = fetchDataPerDDMM(date, cityService, store);
         let res = await lastValueFrom(call);
         return res;
       },
@@ -199,4 +141,56 @@ function findMaxKey(arr) {
   }
 
   return maxKey;
+}
+
+function fetchDataPerDDMM(date, cityService, store): Observable<DailyHistoryResponse> {
+  let call = cityService.getDataPerDay(date, store.city.city_code()).pipe(
+    mergeMap((res:DailyHistoryResponse) => {
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      // check if data of last day is missing
+      // if day is near get from getDayForecast instead of history
+      const dateLimit = new Date();
+      dateLimit.setHours(0, 0, 0);
+      dateLimit.setDate(dateLimit.getDate() - 4);
+      if (date >= dateLimit) {
+        patchState(store, { values: res });
+        return cityService.getDayForecast(date, store.city.latitude(), store.city.longitude()).pipe(
+          map((forecastResponse: ForecastResponse) => {
+            const today = new Date();
+            const isToday =
+              today.getFullYear() === date.getFullYear() &&
+              today.getMonth() === date.getMonth() &&
+              today.getDate() === date.getDate();
+
+            if (!isToday) {
+              forecastResponse.current.time = date.getTime() / 1000;
+              let mean = forecastResponse.daily.temperature_2m_mean
+                ? forecastResponse.daily.temperature_2m_mean[0]
+                : (forecastResponse.daily.temperature_2m_max[0] +
+                  forecastResponse.daily.temperature_2m_min[0]) /
+                  2;
+                  forecastResponse.current.temperature_2m = mean;
+
+              let feelsLike = forecastResponse.daily.apparent_temperature_mean
+                ? forecastResponse.daily.apparent_temperature_mean[0]
+                : (forecastResponse.daily.apparent_temperature_max[0] +
+                  forecastResponse.daily.apparent_temperature_min[0]) /
+                  2;
+                  forecastResponse.current.apparent_temperature = feelsLike;
+            }
+            if (res.hasMissingData() && date < today) {
+              res = mergeForecastToRawDay(res, forecastResponse);
+            }
+            patchState(store, { forecast: forecastResponse });
+            return res;
+          })
+        );
+      }
+      patchState(store, { forecast: res.getForecastFromDate(date) });
+      patchState(store, { values: res });
+      return of(res);
+    })
+  );
+  return call;
 }

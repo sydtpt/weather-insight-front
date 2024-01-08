@@ -1,7 +1,9 @@
-import { Component, ViewChild, effect, inject } from '@angular/core';
+import { Component, Input, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {
+  ApexAxisChartSeries,
+  ApexNonAxisChartSeries,
   ChartComponent,
   NgApexchartsModule
 } from "ng-apexcharts";
@@ -21,12 +23,20 @@ export class CardBarComponent {
   dailyStore = inject(DailyStore);
 
   data: DailyHistoryResponse;
+  @Input() series: {key: string, description: string}[];
 
   constructor(){
     effect(() => {
       this.data = this.dailyStore.values();
-      if(Object.keys(this.data).length) {
-        this.createChart(this.data);
+      debugger
+      if(Object.keys(this.data).length && this.series) {
+        let series = this.series.map( item => {
+          return {
+            data: this.data[item.key], name: item.description 
+          }
+        })
+        debugger
+        this.createChart(this.data, series );
       }
     });
   }
@@ -34,18 +44,14 @@ export class CardBarComponent {
   ngOnInit(): void {
   }
 
-  createChart(data: DailyHistoryResponse){
+  createChart(data: DailyHistoryResponse, series:any){
+    debugger
     let minTemp = Math.min( ...data.apparent_temperature_min, ...data.temperature_2m_min);
     minTemp = minTemp > 0 ? 0 : minTemp;
     data.date = data.date ? data.date : [];
     this.chartOptions = {
       colors: ['#4154f1', '#F9CE1D', '#4154f1'],
-      series: [
-        {
-          name: "mm",
-          data: data["precipitation_sum"]
-        }
-      ],
+      series: series,
       chart: {
         height: 400,
         type: "bar",
