@@ -1,4 +1,4 @@
-import { computed, inject } from "@angular/core";
+import { inject } from "@angular/core";
 import {
   signalStore,
   patchState,
@@ -18,7 +18,6 @@ const initialState: State = {
   isLoading: true,
   selectedCity: "",
 };
-
 export const CitiesStore = signalStore(
   { providedIn: "root" },
   withEntities<City>(),
@@ -35,7 +34,6 @@ export const CitiesStore = signalStore(
         patchState(store, { cities: cities, isLoading: false });
       },
       getTimeZone() {
-        debugger
         let temp: any = store.cities().find(
           (i) => i.city_code === store.selectedCity()
         );
@@ -43,6 +41,9 @@ export const CitiesStore = signalStore(
       },
       exist(city_code: string) {
         return !!store.cities().find((i) => city_code === i.city_code);
+      },
+      getCityByCode(city_code: string){
+        return store.cities().find((i) => city_code === i.city_code);
       },
       getLatitudeLongitude(city_code: string) {
         let city = store.cities().find((i) => city_code === i.city_code);

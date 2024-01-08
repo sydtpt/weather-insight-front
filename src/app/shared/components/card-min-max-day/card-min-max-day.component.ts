@@ -1,7 +1,7 @@
-import { Component, computed, effect } from '@angular/core';
+import { Component, Input, computed, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { ReportsService } from '../../services/today.service';
+import { DailyStore } from '../../../store/daily-data.store';
 
 @Component({
   selector: 'app-card-min-max-day',
@@ -11,14 +11,7 @@ import { ReportsService } from '../../services/today.service';
   styleUrl: './card-min-max-day.component.less'
 })
 export class CardMinMaxDayComponent {
-  isLoading = true;
-  data
-  constructor(private reportService: ReportsService){
-    effect(()=>{
-      this.data = this.reportService.getMinAndMaxPerDaySignal();
-      if(Object.keys(this.data).length) {
-        this.isLoading = !Object.keys(this.data).length ? true: false;}
-    })
-  }
+  dailyStore = inject(DailyStore);
+
 }
 

@@ -1,12 +1,12 @@
-import { Component, ViewChild, effect } from '@angular/core';
+import { Component, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {
   ChartComponent,
   NgApexchartsModule
 } from "ng-apexcharts";
-import { ReportsService } from '../../services/today.service';
 import { DailyHistoryResponse } from '../../models/forecast-response.model';
+import { DailyStore } from '../../../store/daily-data.store';
 
 @Component({
   selector: 'app-card-bar',
@@ -18,15 +18,15 @@ import { DailyHistoryResponse } from '../../models/forecast-response.model';
 export class CardBarComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
+  dailyStore = inject(DailyStore);
 
-  data$;
+  data: DailyHistoryResponse;
 
-  constructor(private reportService: ReportsService){
+  constructor(){
     effect(() => {
-      this.data$ = this.reportService.rawDataPerDaySignal();
-      let test = !!Object.keys(this.data$).length;
-      if (test) {
-        this.createChart(this.data$)
+      this.data = this.dailyStore.values();
+      if(Object.keys(this.data).length) {
+        this.createChart(this.data);
       }
     });
   }
@@ -96,10 +96,10 @@ export class CardBarComponent {
   
 
   getTodayDescription() {
-    if(!this.data$ || !this.data$["date"]) {
+    if(!this.data || !this.data.date) {
       return "";
     }
-    const date = new Date(this.data$["date"][0])
+    const date = new Date(this.data.date[0])
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });
     const formattedDate = `${day}, ${month}`;

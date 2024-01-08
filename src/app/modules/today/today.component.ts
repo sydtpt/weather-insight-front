@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { CardSameDayComponent } from '../../shared/components/card-same-day/card-same-day.component';
-import { ReportsService } from '../../shared/services/today.service';
 import { CardMinMaxDayComponent } from '../../shared/components/card-min-max-day/card-min-max-day.component';
 import { CardMoonPhaseComponent } from '../../shared/components/card-moon-phase/card-moon-phase.component';
 import { CardTempDayComponent } from '../../shared/components/card-temp-day/card-temp-day.component';
 import { FormsModule } from '@angular/forms';
 import { CardBarComponent } from '../../shared/components/card-bar/card-bar.component';
+import { DailyStore } from '../../store/daily-data.store';
+import { patchState } from '@ngrx/signals';
+import { DailyHistoryResponse, ForecastResponse } from '../../shared/models/forecast-response.model';
 
 const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayComponent, CardTempDayComponent, CardBarComponent];
 
@@ -23,16 +25,22 @@ export class TodayComponent {
   date = new Date();
   formattedDate: string;
   private readonly maxDate = new Date(this.date);
-
-
-  constructor(private reportService: ReportsService){
+  private dailyStore = inject(DailyStore);
+  data: DailyHistoryResponse;
+  constructor(){
+    effect(()=>{
+      this.date = this.dailyStore.date();
+      this.dailyStore.getHistoricalDDMM(this.date).then(res => {
+        this.data = res;
+      });
+    })
 
   }
+
   ngOnInit() {
     this.maxDate.setDate(this.date.getDate() + 7);
     this.formattedDate = this.getDateFormatted(this.date);
-    this.reportService.getDayForecast(this.date).subscribe();
-    this.reportService.getHistoricalDDMM(this.date).subscribe();
+    // §sthis.dailyStore.getHistoricalDDMM(this.date).then();
   }
 
   changeDay(date) {
@@ -47,7 +55,7 @@ export class TodayComponent {
     const timestamp = new Date(date);
     this.date = new Date(timestamp);
     this.formattedDate = this.getDateFormatted(this.date);
-    this.reportService.getHistoricalDDMM(this.date).subscribe();
+    patchState(this.dailyStore, {date: this.date })
   }
 
   getMaxDayForecast() {

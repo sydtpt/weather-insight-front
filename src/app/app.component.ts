@@ -11,6 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { CitiesStore } from "./store/cities.store";
 import { patchState } from "@ngrx/signals";
 import { asapScheduler } from 'rxjs';
+import { DailyStore } from "./store/daily-data.store";
 
 @Component({
   selector: "app-root",
@@ -28,6 +29,7 @@ import { asapScheduler } from 'rxjs';
 })
 export class AppComponent {
   citiesStore = inject(CitiesStore);
+  dailyStore = inject(DailyStore);
 
   constructor(private router: Router) {
     effect(() => {
@@ -38,7 +40,10 @@ export class AppComponent {
       let urlsData = window.location.href.split("/").filter((e) => e);
       if (urlsData.length > 2 && this.citiesStore.exist(urlsData[2])) {
         this.citiesStore.selectedCity();
-        asapScheduler.schedule(() => patchState(this.citiesStore, {selectedCity: urlsData[2]})); // the fix
+        asapScheduler.schedule(() => {
+          patchState(this.citiesStore, {selectedCity: urlsData[2]});
+          patchState(this.dailyStore, {date: new Date(), city: this.citiesStore.getCityByCode(urlsData[2])})
+        }); // to fix
       } else {
         this.router.navigateByUrl("/");
       }
@@ -46,9 +51,6 @@ export class AppComponent {
     });
   }
   ngOnInit() {
-
-    console.log("isLoading: ", this.citiesStore.isLoading());
-    console.log("isLoading: ", this.citiesStore.cities());
   }
 
   goToCityDashboard(city_code) {

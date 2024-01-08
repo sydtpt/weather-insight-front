@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
 import { SideBarComponent } from "../side-bar/header/sidebar.component";
 import { FooterComponent } from "../footer/footer.component";
+import { CitiesStore } from '../../store/cities.store';
 
 @Component({
     selector: 'app-layout',
@@ -13,7 +14,7 @@ import { FooterComponent } from "../footer/footer.component";
     imports: [CommonModule, RouterOutlet, HeaderComponent, SideBarComponent, FooterComponent]
 })
 export class LayoutComponent {
-
+  citiesStore = inject(CitiesStore);
 
   constructor(private router: Router ) {
 

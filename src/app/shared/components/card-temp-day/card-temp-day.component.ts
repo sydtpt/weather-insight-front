@@ -1,11 +1,11 @@
-import { Component, computed, effect, inject } from "@angular/core";
+import { Component, Input, computed, effect, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
-import { ReportsService } from "../../services/today.service";
 import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
 import { ForecastResponse } from "../../models/forecast-response.model";
 import { Moon } from "lunarphase-js";
 import { CitiesStore } from "../../../store/cities.store";
+import { DailyStore } from "../../../store/daily-data.store";
 
 @Component({
   selector: "app-card-temp-day",
@@ -16,20 +16,21 @@ import { CitiesStore } from "../../../store/cities.store";
 })
 export class CardTempDayComponent {
   citiesStore = inject(CitiesStore);
-
+  dailyStore =  inject(DailyStore);
 
   data: ForecastResponse;
-  constructor(private reportsService: ReportsService) {
-    effect(() => {
-      let data = this.reportsService.dayForecastSignal();
-      let test = !!Object.keys(data).length;
-      if (test) {
-        this.data = data;
+  constructor() {
+    effect(()=>{
+      let forecast = this.dailyStore.forecast();
+      if( Object.keys(forecast).length) {
+        this.data = forecast;
       }
     });
  }
 
   ngOnInit(): void {
+
+
   }
 
   getTemp() {

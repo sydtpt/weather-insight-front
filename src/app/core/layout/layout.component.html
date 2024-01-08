@@ -3,7 +3,9 @@
 <app-side-bar></app-side-bar>
 
 <main id="main" class="main">
+  @if (citiesStore.selectedCity()) {
   <router-outlet></router-outlet>
+  }
 </main>
 
 <!-- ======= Footer ======= -->

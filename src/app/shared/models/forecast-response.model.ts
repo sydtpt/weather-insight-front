@@ -2,7 +2,7 @@ export class DailyHistoryResponse {
   apparent_temperature_max: number[];
   apparent_temperature_min: number[];
   apparent_temperature_mean: number[];
-  date?: number[];
+  date: number[];
   daylight_duration?: number[];
   et0_fao_evapotranspiration?: number[];
   precipitation_hours?: number[];
@@ -26,6 +26,7 @@ export class DailyHistoryResponse {
   wind_direction_10m_dominant?: number[];
   wind_gusts_10m_max?: number[];
   wind_speed_10m_max: number[];
+  forecast?: ForecastResponse;
 
   constructor(data?: object) {
     if (!data) {
@@ -36,7 +37,7 @@ export class DailyHistoryResponse {
     }
   }
 
-  hasMissingData(date): boolean {
+  hasMissingData(): boolean {
     let hasNull = this.temperature_2m_max.find((k) => {
       return k == null;
     });
@@ -87,7 +88,7 @@ export class DailyHistoryResponse {
           : [],
           apparent_temperature_min: [this.apparent_temperature_min[index]],
           apparent_temperature_mean: [this.apparent_temperature_mean[index]],
-          // date: [this.date[index]],
+        date: [this.date[index]],
         // daylight_duration: [this.daylight_duration[index]],
         // et0_fao_evapotranspiration: [this.et0_fao_evapotranspiration[index]],
         // precipitation_hours: [this.precipitation_hours[index]],

@@ -1,12 +1,12 @@
-import { Component, ViewChild, effect, inject } from '@angular/core';
+import { Component, ViewChild, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {
   ChartComponent,
   NgApexchartsModule
 } from "ng-apexcharts";
+import { ReportsService } from '../../services/reports.service';
 import { DailyHistoryResponse } from '../../models/forecast-response.model';
-import { DailyStore } from '../../../store/daily-data.store';
 
 @Component({
   selector: 'app-card-same-day',
@@ -18,16 +18,15 @@ import { DailyStore } from '../../../store/daily-data.store';
 export class CardSameDayComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
-  dailyStore = inject(DailyStore);
 
-  data: DailyHistoryResponse;
+  data$;
 
-  constructor(){
+  constructor(private reportService: ReportsService){
     effect(() => {
-      this.data = this.dailyStore.values();
-      let test = !!Object.keys(this.data).length;
+      this.data$ = this.reportService.rawDataPerDaySignal();
+      let test = !!Object.keys(this.data$).length;
       if (test) {
-        this.createChart(this.data)
+        this.createChart(this.data$)
       }
     });
   }
@@ -37,8 +36,9 @@ export class CardSameDayComponent {
 
   createChart(data: DailyHistoryResponse){
     let minTemp = Math.min( ...data.apparent_temperature_min, ...data.temperature_2m_min);
-    minTemp = minTemp >= 0 ? 0 : minTemp;
+    minTemp = minTemp > 0 ? 0 : minTemp;
     data.date = data.date ? data.date : [];
+    debugger
     this.chartOptions = {
       colors: ['#EA3546', '#F9CE1D', '#4154f1'],
       series: [
@@ -131,10 +131,10 @@ export class CardSameDayComponent {
   
 
   getTodayDescription() {
-    if(!this.data || !this.data["date"]) {
+    if(!this.data$ || !this.data$["date"]) {
       return "";
     }
-    const date = new Date(this.data["date"][0])
+    const date = new Date(this.data$["date"][0])
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });
     const formattedDate = `${day}, ${month}`;
