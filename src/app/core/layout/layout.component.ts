@@ -4,7 +4,6 @@ import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
 import { SideBarComponent } from "../side-bar/header/sidebar.component";
 import { FooterComponent } from "../footer/footer.component";
-import { CityService } from '../../shared/services/city.service';
 
 @Component({
     selector: 'app-layout',
@@ -16,7 +15,7 @@ import { CityService } from '../../shared/services/city.service';
 export class LayoutComponent {
 
 
-  constructor(public cityService: CityService, private router: Router ) {
+  constructor(private router: Router ) {
 
   }
 

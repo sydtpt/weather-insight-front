@@ -1,8 +1,5 @@
-@if (!hasCitySelected) {
+@if (!citiesStore.selectedCity()) {
   <div class="p-5">
-    <div class="row justify-content-center p-5">
-      Select city {{hasCitySelected}}
-    </div>
     <div class="row justify-content-center">
       <div class="col-lg-4"  (click)="goToCityDashboard('brussels')">
         <a class="card" (click)="goToCityDashboard('brussels');" routerLinkActive="active">

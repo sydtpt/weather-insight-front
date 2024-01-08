@@ -1,21 +1,22 @@
-import { Injectable, Signal, effect, signal } from "@angular/core";
+import { Injectable, Signal, effect, inject, signal } from "@angular/core";
 import { HttpService } from "./http.service";
 import { map, mergeMap, tap } from "rxjs/operators";
 import { of } from "rxjs";
-import { CityService } from "./city.service";
 import { DailyHistoryResponse, ForecastResponse } from "../models/forecast-response.model";
-import { Observable } from "../../../assets/vendor/tinymce/tinymce";
+import { CitiesStore } from "../../store/cities.store";
 
 @Injectable({ providedIn: "root" })
 export class ReportsService {
   public getMinAndMaxPerDaySignal: any = signal({});
   public rawDataPerDaySignal = signal<DailyHistoryResponse>(new DailyHistoryResponse());
   public dayForecastSignal = signal<ForecastResponse>(new ForecastResponse());
-
+  citiesStore = inject(CitiesStore);
   private rawDataFromDay: DailyHistoryResponse;
-
   private currentDD;
   private currentMM;
+
+
+
 
   /*   Move to external file   */
   private forecastApi = `https://api.open-meteo.com/v1/forecast?
@@ -27,7 +28,7 @@ latitude={{lat}}&longitude={{long}}
 &end_date={{end_date}}
 &timeformat=unixtime`;
 
-  constructor(private http: HttpService, private cityService: CityService) {
+  constructor(private http: HttpService) {
     effect(
       () => {
         if (Object.keys(this.rawDataPerDaySignal()).length) {
@@ -43,16 +44,15 @@ latitude={{lat}}&longitude={{long}}
   }
 
   getDayForecast(selectedDate: Date) {
-    let coords = this.cityService.getCityLatLon();
+    let coords = this.citiesStore.getLatitudeLongitude(this.citiesStore.selectedCity());
     let api = this.forecastApi
       .replace("{{lat}}", coords.latitude)
-      .replace("{{long}}", coords.longiture)
+      .replace("{{long}}", coords.longitude)
       .replace("{{start_date}}", selectedDate.toISOString().split("T")[0])
       .replace("{{end_date}}", selectedDate.toISOString().split("T")[0]);
     return this.http.getForecast(api).pipe(
       map((res) => {
         const today = new Date();
-
         const isToday = today.getFullYear() === selectedDate.getFullYear() &&
                         today.getMonth() === selectedDate.getMonth() &&
                         today.getDate() === selectedDate.getDate();
@@ -71,11 +71,10 @@ latitude={{lat}}&longitude={{long}}
     );
   }
 
-
   private getRawDataPerDay(newDate: Date) {
     let day = newDate.getDate();
     let month = newDate.getMonth() + 1;
-    let url = `history/${this.cityService.selectedCity}?dd=${day}&mm=${month}`;
+    let url = `history/${this.citiesStore.selectedCity()}?dd=${day}&mm=${month}`;
     return this.http.get(url).pipe(
       map((res) => {
           return new DailyHistoryResponse(res);

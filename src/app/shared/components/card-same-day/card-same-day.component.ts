@@ -38,7 +38,6 @@ export class CardSameDayComponent {
     let minTemp = Math.min( ...data.apparent_temperature_min, ...data.temperature_2m_min);
     minTemp = minTemp >= 0 ? 0 : minTemp;
     data.date = data.date ? data.date : [];
-    debugger
     this.chartOptions = {
       colors: ['#EA3546', '#F9CE1D', '#4154f1'],
       series: [

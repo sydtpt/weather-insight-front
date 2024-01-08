@@ -1,4 +1,4 @@
-export let WEATHER_CODES = {
+export const WEATHER_CODES = {
   0: "☀️",
   1: "🌤️",
   2: "⛅",

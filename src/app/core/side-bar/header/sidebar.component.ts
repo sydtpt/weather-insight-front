@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { CityService } from '../../../shared/services/city.service';
+import { CitiesStore } from '../../../store/cities.store';
 
 @Component({
   selector: 'app-side-bar',
@@ -11,10 +11,10 @@ import { CityService } from '../../../shared/services/city.service';
   styleUrl: './sidebar.component.less'
 })
 export class SideBarComponent {
-  title = 'weather-insight-front';
+  citiesStore = inject(CitiesStore);
 
 
-  constructor(public cityService: CityService, private router: Router ) {}
+  constructor(private router: Router ) {}
 
   ngOnInit() {
   }

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
-import { CityService } from '../../shared/services/city.service';
 import { FormsModule } from '@angular/forms';
+import { CitiesStore } from '../../store/cities.store';
+import { patchState } from '@ngrx/signals';
 
 @Component({
   selector: 'app-header',
@@ -12,22 +13,15 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './header.component.less'
 })
 export class HeaderComponent {
-  title = 'weather-insight-front';
-  cities:any = [];
-  currentCity;
+  citiesStore = inject(CitiesStore);
 
-  constructor(private citiesService: CityService, private router: Router) {
-
-  }
-
-  ngOnInit() {
-    this.currentCity = this.citiesService.selectedCity;
-    this.cities = this.citiesService.cities;
+  constructor(private router: Router) {
   }
 
   changeCity(event) {
     let city = event.target.value;
-    this.citiesService.selectedCity = city;
+    patchState(this.citiesStore, {selectedCity: city});
+    // this.citiesService.selectedCity = city;
     this.router.navigate([city, "/today"]);
   }
 }

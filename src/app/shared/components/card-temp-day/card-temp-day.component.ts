@@ -1,11 +1,11 @@
-import { Component, computed, effect } from "@angular/core";
+import { Component, computed, effect, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { ReportsService } from "../../services/today.service";
 import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
 import { ForecastResponse } from "../../models/forecast-response.model";
 import { Moon } from "lunarphase-js";
-import { CityService } from "../../services/city.service";
+import { CitiesStore } from "../../../store/cities.store";
 
 @Component({
   selector: "app-card-temp-day",
@@ -15,10 +15,11 @@ import { CityService } from "../../services/city.service";
   styleUrl: "./card-temp-day.component.less",
 })
 export class CardTempDayComponent {
+  citiesStore = inject(CitiesStore);
 
 
   data: ForecastResponse;
-  constructor(private reportsService: ReportsService, private cityService: CityService) {
+  constructor(private reportsService: ReportsService) {
     effect(() => {
       let data = this.reportsService.dayForecastSignal();
       let test = !!Object.keys(data).length;
@@ -72,7 +73,7 @@ export class CardTempDayComponent {
   get sunset(){
     if(this.data.daily) {
       let sunset = new Date(this.data.daily.sunset[0]*1000);
-      return sunset.toLocaleString("pt-BR",{ timeZone: this.cityService.getTimeZone() }).split(", ")[1].substring(0,5)
+      return sunset.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5);
     } else {
       return "";
     }
@@ -81,7 +82,7 @@ export class CardTempDayComponent {
   get sunrise(){
     if(this.data.daily) {
       let sunrise = new Date(this.data.daily.sunrise[0]*1000);
-      return sunrise.toLocaleString("pt-BR",{ timeZone: this.cityService.getTimeZone() }).split(", ")[1].substring(0,5)
+      return sunrise.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
     }
