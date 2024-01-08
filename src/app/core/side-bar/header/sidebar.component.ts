@@ -17,7 +17,6 @@ export class SideBarComponent {
   constructor(public cityService: CityService, private router: Router ) {}
 
   ngOnInit() {
-    console.log(this.cityService.selectedCity);
   }
 
 }

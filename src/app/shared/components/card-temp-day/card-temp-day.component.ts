@@ -72,7 +72,6 @@ export class CardTempDayComponent {
   get sunset(){
     if(this.data.daily) {
       let sunset = new Date(this.data.daily.sunset[0]*1000);
-      console.log(this.cityService.getTimeZone())
       return sunset.toLocaleString("pt-BR",{ timeZone: this.cityService.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
@@ -82,7 +81,6 @@ export class CardTempDayComponent {
   get sunrise(){
     if(this.data.daily) {
       let sunrise = new Date(this.data.daily.sunrise[0]*1000);
-      debugger
       return sunrise.toLocaleString("pt-BR",{ timeZone: this.cityService.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";

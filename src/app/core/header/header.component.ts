@@ -26,9 +26,8 @@ export class HeaderComponent {
   }
 
   changeCity(event) {
-    console.log(event.target.value);
     let city = event.target.value;
     this.citiesService.selectedCity = city;
-    this.router.navigate([city, "/today"]).then(()=> console.log("ASDASDASDASD"));
+    this.router.navigate([city, "/today"]);
   }
 }

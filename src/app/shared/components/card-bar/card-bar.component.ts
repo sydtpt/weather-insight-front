@@ -9,13 +9,13 @@ import { ReportsService } from '../../services/today.service';
 import { DailyHistoryResponse } from '../../models/forecast-response.model';
 
 @Component({
-  selector: 'app-card-same-day',
+  selector: 'app-card-bar',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NgApexchartsModule],
-  templateUrl: './card-same-day.component.html',
-  styleUrl: './card-same-day.component.less'
+  templateUrl: './card-bar.component.html',
+  styleUrl: './card-bar.component.less'
 })
-export class CardSameDayComponent {
+export class CardBarComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
 
@@ -36,55 +36,21 @@ export class CardSameDayComponent {
 
   createChart(data: DailyHistoryResponse){
     let minTemp = Math.min( ...data.apparent_temperature_min, ...data.temperature_2m_min);
-    minTemp = minTemp >= 0 ? 0 : minTemp;
+    minTemp = minTemp > 0 ? 0 : minTemp;
     data.date = data.date ? data.date : [];
     debugger
     this.chartOptions = {
-      colors: ['#EA3546', '#F9CE1D', '#4154f1'],
+      colors: ['#4154f1', '#F9CE1D', '#4154f1'],
       series: [
         {
-          name: "Max",
-          data: Object.values(data["temperature_2m_max"])
-        },
-
-        {
-          name: "Avg",
-          data: Object.values(data["temperature_2m_mean"])
-        },
-        {
-          name: "Min",
-          data: Object.values(data["temperature_2m_min"])
+          name: "mm",
+          data: data["precipitation_sum"]
         }
-
       ],
       chart: {
         height: 400,
-        type: "line",
+        type: "bar",
 
-      },
-      annotations: {
-        yaxis: [{
-          y: minTemp,
-          y2: 0,
-          borderColor: '#000',
-          fillColor: '#9bd2ff',
-          opacity: 0.1,
-
-        },{
-          y: 28,
-          y2: 38,
-          borderColor: '#000',
-          fillColor: '#fff5ba',
-          opacity: 0.1,
-
-        },{
-          y: 38,
-          y2: 70,
-          borderColor: '#000',
-          fillColor: '#ffc3bf',
-          opacity: 0.1,
-
-        }],
       },
       dataLabels: {
         enabled: false

@@ -8,8 +8,9 @@ import { CardMinMaxDayComponent } from '../../shared/components/card-min-max-day
 import { CardMoonPhaseComponent } from '../../shared/components/card-moon-phase/card-moon-phase.component';
 import { CardTempDayComponent } from '../../shared/components/card-temp-day/card-temp-day.component';
 import { FormsModule } from '@angular/forms';
+import { CardBarComponent } from '../../shared/components/card-bar/card-bar.component';
 
-const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayComponent, CardTempDayComponent];
+const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayComponent, CardTempDayComponent, CardBarComponent];
 
 
 @Component({
