@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, Input, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { CardSameDayComponent } from '../../shared/components/card-same-day/card-same-day.component';
@@ -7,9 +7,10 @@ import { CardMoonPhaseComponent } from '../../shared/components/card-moon-phase/
 import { CardTempDayComponent } from '../../shared/components/card-temp-day/card-temp-day.component';
 import { FormsModule } from '@angular/forms';
 import { CardBarComponent } from '../../shared/components/card-bar/card-bar.component';
-import { DailyStore } from '../../store/daily-data.store';
 import { patchState } from '@ngrx/signals';
-import { DailyHistoryResponse } from '../../shared/models/forecast-response.model';
+import { RawDataResponse } from '../../shared/models/http-generic-response.model';
+import { RawDataStore } from '../../store/raw-data/raw-data.store';
+import { CitiesStore } from '../../store/cities.store';
 
 const cards = [CardMoonPhaseComponent, CardSameDayComponent, CardMinMaxDayComponent, CardTempDayComponent, CardBarComponent];
 
@@ -25,15 +26,20 @@ export class TodayComponent {
   date = new Date();
   formattedDate: string;
   private readonly maxDate = new Date(this.date);
-  private dailyStore = inject(DailyStore);
-  data: DailyHistoryResponse;
+  private rawDataStore = inject(RawDataStore);
+  private cityStore = inject(CitiesStore);
+  data: RawDataResponse;
   precipitationSeries = [{key: "precipitation_sum", description: "precipitation" }, {key: "rain_sum", description: "rain" }];
+  
+  // TO DO
+  // temperatureSeries = [{key: "precipitation_sum", description: "precipitation" }, {key: "rain_sum", description: "rain" }];
 
 
   constructor(){
     effect(()=>{
-      this.date = this.dailyStore.date();
-      this.dailyStore.getHistoricalDDMM(this.date).then(res => {
+      this.date = this.rawDataStore.date();
+      let city = this.cityStore.selectedCity();
+      this.rawDataStore.getHistoricalDDMM(this.date, city.city_code).then(res => {
         this.data = res;
       });
     })
@@ -43,7 +49,10 @@ export class TodayComponent {
   ngOnInit() {
     this.maxDate.setDate(this.date.getDate() + 7);
     this.formattedDate = this.getDateFormatted(this.date);
-    // §sthis.dailyStore.getHistoricalDDMM(this.date).then();
+
+
+    let city = this.cityStore.selectedCity();
+    patchState(this.rawDataStore, {date: new Date(), city})
   }
 
   changeDay(date) {
@@ -58,7 +67,7 @@ export class TodayComponent {
     const timestamp = new Date(date);
     this.date = new Date(timestamp);
     this.formattedDate = this.getDateFormatted(this.date);
-    patchState(this.dailyStore, {date: this.date })
+    patchState(this.rawDataStore, {date: this.date })
   }
 
   getMaxDayForecast() {

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CitiesStore } from '../../../store/cities.store';
 
 @Component({
@@ -12,9 +12,9 @@ import { CitiesStore } from '../../../store/cities.store';
 })
 export class SideBarComponent {
   citiesStore = inject(CitiesStore);
+  
 
-
-  constructor(private router: Router ) {}
+  constructor( ) {}
 
   ngOnInit() {
   }

@@ -1,4 +1,4 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
@@ -15,13 +15,13 @@ import { CitiesStore } from '../../store/cities.store';
 })
 export class LayoutComponent {
   citiesStore = inject(CitiesStore);
-
+  @Input() city: string;
   constructor(private router: Router ) {
 
   }
 
-
   ngOnInit() {
+
     this.router.routeReuseStrategy.shouldReuseRoute = () => {
       return false;
     };

@@ -5,7 +5,7 @@ import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
 import { ForecastResponse } from "../../models/forecast-response.model";
 import { Moon } from "lunarphase-js";
 import { CitiesStore } from "../../../store/cities.store";
-import { DailyStore } from "../../../store/daily-data.store";
+import { RawDataStore } from "../../../store/raw-data/raw-data.store";
 
 @Component({
   selector: "app-card-temp-day",
@@ -16,7 +16,7 @@ import { DailyStore } from "../../../store/daily-data.store";
 })
 export class CardTempDayComponent {
   citiesStore = inject(CitiesStore);
-  dailyStore =  inject(DailyStore);
+  dailyStore =  inject(RawDataStore);
 
   data: ForecastResponse;
   constructor() {

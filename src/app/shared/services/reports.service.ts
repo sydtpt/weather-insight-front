@@ -1,17 +1,15 @@
-import { Injectable, Signal, effect, inject, signal } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import { HttpService } from "./http.service";
-import { map, mergeMap, tap } from "rxjs/operators";
-import { Observable, of } from "rxjs";
-import { DailyHistoryResponse, ForecastResponse } from "../models/forecast-response.model";
-import { CitiesStore } from "../../store/cities.store";
-import { City } from "../models/city.model";
+import { map, } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { ForecastResponse } from "../models/forecast-response.model";
+import { RawDataResponse } from "../models/http-generic-response.model";
 
 
 @Injectable({ providedIn: "root" })
 export class ReportsService {
-  public rawDataPerDaySignal = signal<DailyHistoryResponse>(new DailyHistoryResponse());
+  public rawDataPerDaySignal = signal<RawDataResponse>(new RawDataResponse());
   public dayForecastSignal = signal<ForecastResponse>(new ForecastResponse());
-  citiesStore = inject(CitiesStore);
 
   /*   Move to external file   */
   private forecastApi = `https://api.open-meteo.com/v1/forecast?
@@ -28,15 +26,14 @@ latitude={{lat}}&longitude={{long}}
 
 
 
-  getDataPerDay(newDate: Date, city: City) {
+  getRawDataPerDay(newDate: Date, city_code: string): Observable<RawDataResponse> {
     let day = newDate.getDate();
     let month = newDate.getMonth() + 1;
-    let url = `history/${this.citiesStore.selectedCity()}?dd=${day}&mm=${month}`;
+    let url = `history/${city_code}?dd=${day}&mm=${month}`;
     return this.http.get(url).pipe(
       map((res) => {
-          return new DailyHistoryResponse(res);
+          return new RawDataResponse(res);
       }),
-     
     );
   }
 

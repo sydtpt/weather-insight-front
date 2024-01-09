@@ -1,7 +1,7 @@
 <div class="card info-card revenue-card">
   <div class="card-body">
     <h5 class="card-title">History <span>| This day</span></h5>
-    <div class="d-flex flex-column" *ngIf="dailyStore.maxTemp()">
+    <div class="d-flex flex-column" *ngIf="dataset">
 
 
         <div class="d-flex pt-4">
@@ -9,10 +9,9 @@
             <span style="font-size: 60px;">🔥</span>
           </div>
           <div  class="ps-2">
-            <h6  class="pt-2">{{ dailyStore.maxTemp().max.toFixed() }}°C</h6>
+            <h6  class="pt-2">{{ getMax().temp }}°C</h6>
             <div class=" d-flex">
-              <span class="text-success small fw-bold">Max</span>
-              <p class="fw-bold small ps-1">{{dailyStore.maxTemp().date.getFullYear()}}</p>
+              <p class="fw-bold small ps-1">{{getMax().date | date: "mediumDate" }}</p>
             </div>
 
           </div>
@@ -24,10 +23,9 @@
             <span style="font-size: 50px;">❄️</span>
           </div>
           <div  class="ps-1">
-            <h6  class="pt-2">{{dailyStore.maxTemp().max.toFixed()}}°C</h6>
+            <h6  class="pt-2">{{getMin().temp}}°C</h6>
             <div class=" d-flex">
-              <span class="text-danger small fw-bold">Min</span>
-              <p class="fw-bold small ps-1">{{dailyStore.maxTemp().date.getFullYear()}}</p>
+              <p class="fw-bold small ps-1">{{ getMin().date | date: "mediumDate" }}</p>
             </div>
           </div>
         </div>

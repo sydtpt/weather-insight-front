@@ -12,11 +12,18 @@ import { City } from "../shared/models/city.model";
 import { CityService } from "../shared/services/city.service";
 import { firstValueFrom } from "rxjs";
 
-type State = { cities: City[]; isLoading: boolean; selectedCity: string };
+type State = { cities: City[]; isLoading: boolean; selectedCity: City };
 const initialState: State = {
   cities: [],
   isLoading: true,
-  selectedCity: "",
+  selectedCity: {
+    city_code: "",
+    city_desc: "",
+    latitude: "",
+    longitude: "",
+    image: "",
+    timezone: "",
+  },
 };
 export const CitiesStore = signalStore(
   { providedIn: "root" },
@@ -27,28 +34,33 @@ export const CitiesStore = signalStore(
     // TO DO
   })),
 
-  withMethods((store, cityService = inject(CityService)) => {
+  withMethods((state, cityService = inject(CityService)) => {
     return {
       async load() {
         const cities = await firstValueFrom(cityService.getCities());
-        patchState(store, { cities: cities, isLoading: false });
+        patchState(state, { cities: cities, isLoading: false });
       },
       getTimeZone() {
-        let temp: any = store.cities().find(
-          (i) => i.city_code === store.selectedCity()
+        let temp: any = state.cities().find(
+          (i) => i.city_code === state.selectedCity().city_code
         );
         return temp ? temp.timezone : "";
       },
       exist(city_code: string) {
-        return !!store.cities().find((i) => city_code === i.city_code);
+        if(!city_code) return
+        return !!state.cities().find((i) => city_code === i.city_code);
       },
       getCityByCode(city_code: string){
-        return store.cities().find((i) => city_code === i.city_code);
+        return state.cities().find((i) => city_code === i.city_code);
       },
       getLatitudeLongitude(city_code: string) {
-        let city = store.cities().find((i) => city_code === i.city_code);
+        let city = state.cities().find((i) => city_code === i.city_code);
         return city ? {latitude: city.latitude, longitude: city.longitude}:  {latitude: "0", longitude: "0"} 
       },
+      selectCity(city_code: string): City | undefined {
+        let city = state.cities().find((i) => city_code === i.city_code);
+        return city;
+      }
     };
   }),
   withHooks({
@@ -56,8 +68,6 @@ export const CitiesStore = signalStore(
       console.log("++++++++++++++++++++++++++++++++");
       console.log("onInit: CitiesStore");
       console.log("++++++++++++++++++++++++++++++++");
-      patchState(store, { isLoading: true });
-      store.load();
     },
     onDestroy() {
       console.log("++++++++++++++++++++++++++++++++");

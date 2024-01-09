@@ -1,12 +1,11 @@
-import { Component, ViewChild, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import {
   ChartComponent,
   NgApexchartsModule
 } from "ng-apexcharts";
-import { DailyHistoryResponse } from '../../models/forecast-response.model';
-import { DailyStore } from '../../../store/daily-data.store';
+import { RawDataResponse } from '../../models/http-generic-response.model';
 
 @Component({
   selector: 'app-card-same-day',
@@ -18,24 +17,22 @@ import { DailyStore } from '../../../store/daily-data.store';
 export class CardSameDayComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
-  dailyStore = inject(DailyStore);
 
-  data: DailyHistoryResponse;
+  @Input() dataset: RawDataResponse;
 
   constructor(){
-    effect(() => {
-      this.data = this.dailyStore.values();
-      let test = !!Object.keys(this.data).length;
-      if (test) {
-        this.createChart(this.data)
-      }
-    });
+    effect(()=>{})
   }
 
   ngOnInit(): void {
+    this.createChart(this.dataset)
   }
 
-  createChart(data: DailyHistoryResponse){
+  ngOnChanges() {
+    this.createChart(this.dataset)
+  }   
+
+  createChart(data: RawDataResponse){
     let minTemp = Math.min( ...data.apparent_temperature_min, ...data.temperature_2m_min);
     minTemp = minTemp >= 0 ? 0 : minTemp;
     data.date = data.date ? data.date : [];
@@ -131,10 +128,10 @@ export class CardSameDayComponent {
   
 
   getTodayDescription() {
-    if(!this.data || !this.data["date"]) {
+    if(!this.dataset || !this.dataset["date"]) {
       return "";
     }
-    const date = new Date(this.data["date"][0])
+    const date = new Date(this.dataset["date"][0])
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });
     const formattedDate = `${day}, ${month}`;

@@ -3,7 +3,7 @@
   <ul class="sidebar-nav" id="sidebar-nav">
 
     <li class="nav-item">
-      <a class="nav-link collapsed" routerLink="/{{citiesStore.selectedCity}}/dashboard" >
+      <a class="nav-link collapsed" routerLink="/{{citiesStore.selectedCity().city_code}}/dashboard" >
         <i class="bi bi-grid"></i>
         <span>Dashboard</span>
       </a>
@@ -184,7 +184,7 @@
     <li class="nav-heading">Pages</li>
 
     <li class="nav-item">
-      <a class="nav-link collapsed" routerLink="/{{citiesStore.selectedCity}}/today" >
+      <a class="nav-link collapsed" routerLink="/{{citiesStore.selectedCity().city_code}}/today" >
         <i class="bi bi-person"></i>
         <span>Today</span>
       </a>
