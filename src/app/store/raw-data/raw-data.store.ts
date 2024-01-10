@@ -1,4 +1,3 @@
-import { computed, effect, inject } from "@angular/core";
 import {
   signalStore,
   withState,
@@ -15,9 +14,7 @@ export const RawDataStore = signalStore(
   withRawDataMethods(),
   withHooks({
     onInit() {
-      console.log("++++++++++++++++++++++++++++++++");
-      console.log("onInit: RawDataStore");
-      console.log("++++++++++++++++++++++++++++++++");
+
     },
     onDestroy() {
       console.log("++++++++++++++++++++++++++++++++");

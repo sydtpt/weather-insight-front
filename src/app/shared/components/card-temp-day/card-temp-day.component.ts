@@ -1,65 +1,65 @@
-import { Component, Input, computed, effect, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
 import { ForecastResponse } from "../../models/forecast-response.model";
 import { Moon } from "lunarphase-js";
 import { CitiesStore } from "../../../store/cities.store";
-import { RawDataStore } from "../../../store/raw-data/raw-data.store";
 
 @Component({
   selector: "app-card-temp-day",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterOutlet],
   templateUrl: "./card-temp-day.component.html",
   styleUrl: "./card-temp-day.component.less",
 })
 export class CardTempDayComponent {
   citiesStore = inject(CitiesStore);
-  dailyStore =  inject(RawDataStore);
+  @Input() dataset: ForecastResponse | undefined;
 
-  data: ForecastResponse;
   constructor() {
-    effect(()=>{
-      let forecast = this.dailyStore.forecast();
-      if( Object.keys(forecast).length) {
-        this.data = forecast;
-      }
-    });
- }
+  }
 
   ngOnInit(): void {
-
 
   }
 
   getTemp() {
-    return this.data.current.temperature_2m.toFixed();
+    return this.dataset?.current.temperature_2m.toFixed();
   }
 
   getFeelsLike() {
-    return this.data.current.apparent_temperature.toFixed();
+    return this.dataset?.current.apparent_temperature.toFixed();
   }
 
   getEmojyByCodeWeatherCode(weather_code?) {
-    return weatherCodes[weather_code];
+    let forecaset = this.dataset;
+    if (!forecaset) {
+        return "";
+    }
+    return weatherCodes[forecaset.current.weather_code];
   }
 
 
   getWind() {
-    return this.data.current.wind_speed_10m.toFixed();
+    return this.dataset?.current.wind_speed_10m.toFixed();
   }
 
   getMaxTemp(){
-    return this.data.daily.temperature_2m_max[0].toFixed();
+    return this.dataset?.daily.temperature_2m_max[0].toFixed();
   }
 
   getMinTemp(){
-    return this.data.daily.temperature_2m_min[0].toFixed();
+    return this.dataset?.daily.temperature_2m_min[0].toFixed();
   }
 
   getTodayDescription() {
-    const date = new Date(this.data.current.time * 1000)
+    let forecaset = this.dataset;
+    if (!forecaset) {
+        return "";
+    }
+    const date = new Date(forecaset.current.time * 1000)
     if (new Date().toDateString() === date.toDateString()) {
       return "Today";
     }
@@ -72,8 +72,12 @@ export class CardTempDayComponent {
   }
 
   get sunset(){
-    if(this.data.daily) {
-      let sunset = new Date(this.data.daily.sunset[0]*1000);
+    let forecaset = this.dataset;
+    if (!forecaset) {
+        return "";
+    }
+    if(this.dataset?.daily) {
+      let sunset = new Date(this.dataset?.daily.sunset[0]*1000);
       return sunset.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5);
     } else {
       return "";
@@ -81,8 +85,8 @@ export class CardTempDayComponent {
   }
 
   get sunrise(){
-    if(this.data.daily) {
-      let sunrise = new Date(this.data.daily.sunrise[0]*1000);
+    if(this.dataset?.daily) {
+      let sunrise = new Date(this.dataset?.daily.sunrise[0]*1000);
       return sunrise.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
@@ -90,8 +94,8 @@ export class CardTempDayComponent {
   }
 
   get humidity(){
-    if(this.data.current.relative_humidity_2m) {
-      return this.data.current.relative_humidity_2m;
+    if(this.dataset?.current.relative_humidity_2m) {
+      return this.dataset?.current.relative_humidity_2m;
     } else {
       return false;
     }
@@ -99,11 +103,19 @@ export class CardTempDayComponent {
 
 
   getMoonPhaseDescription() {
-    return Moon.lunarPhase(new Date(this.data.current.time *1000));
+    let forecaset = this.dataset;
+    if (!forecaset) {
+        return "";
+    }
+    return Moon.lunarPhase(new Date(forecaset.current.time *1000));
   }
 
   getMoonPhaseEmoji() {
-    return Moon.lunarPhaseEmoji(new Date(this.data.current.time *1000));
+    let forecaset = this.dataset;
+    if (!forecaset) {
+        return "";
+    }
+    return Moon.lunarPhaseEmoji(new Date(forecaset.current.time *1000));
   }
 
 }

@@ -18,29 +18,26 @@
 </div><!-- End Page Title -->
 
 <section class="section dashboard">
-  <div class="row" *ngIf="data">
+  <div class="row" *ngIf="dataset">
     <div class="col-lg-12">
       <div class="row">
         <div class="col-xxl-5 col-md-6">
-          <app-card-temp-day></app-card-temp-day>
+          <app-card-temp-day [dataset]="forecast" ></app-card-temp-day>
         </div>
         <div class="col-xxl-7 col-md-6">
-          <app-card-min-max-day [dataset]="data"></app-card-min-max-day>
-        </div>
-
-
-
-        <!--div class="col-xxl-4 col-xl-12">
-            <app-card-moon-phase></app-card-moon-phase>
-        </div-->
-
-
-        <div class="col-12">
-            <app-card-same-day [dataset]="data"></app-card-same-day>
+          <app-card-min-max-day [dataset]="dataset"></app-card-min-max-day>
         </div>
 
         <div class="col-12">
-          <app-card-bar  [dataset]="data" [series]="precipitationSeries"></app-card-bar>
+            <app-card-chart-line title="Temperature" [dataset]="dataset" [colors]="temperatureColors" [series]="temperatureSeries"></app-card-chart-line>
+        </div>
+
+        <div class="col-12">
+          <app-card-chart-line title="Feels like" [dataset]="dataset" [colors]="feelsLikeColors" [series]="feelsLikeSeries"></app-card-chart-line>
+      </div>
+
+        <div class="col-12">
+          <app-card-chart-bar  title="Precipitation"  [dataset]="dataset" [series]="precipitationSeries" ></app-card-chart-bar>
       </div>
 
       </div>

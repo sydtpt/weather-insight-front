@@ -1,21 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { CardSameDayComponent } from './card-same-day.component';
+import { CardChartBarComponent } from './card-chart-bar.component';
 
-describe('CardSameDayComponent', () => {
+describe('CardChartBarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardSameDayComponent],
+      imports: [CardChartBarComponent],
     }).compileComponents();
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(CardSameDayComponent);
+    const fixture = TestBed.createComponent(CardChartBarComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
   it('should render title', () => {
-    const fixture = TestBed.createComponent(CardSameDayComponent);
+    const fixture = TestBed.createComponent(CardChartBarComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Hello, weather-insight-front');

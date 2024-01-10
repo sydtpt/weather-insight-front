@@ -27,10 +27,6 @@ export function withRawDataMethods() {
         let res = await lastValueFrom(call);
         return res;
       },
-      async getDayForecast(date: Date) {
-        return this.getRawDataPerDay(date);
-      },
-
       getMax(key: string) {
         return Math.max(state.values[key]);
       },
@@ -127,8 +123,7 @@ function fetchDataPerDDMM(
             })
           );
       }
-      patchState(state, { forecast: res.getForecastFromDate(date) });
-      patchState(state, { values: res });
+      patchState(state, { values: res, forecast: res.getForecastFromDate(date) });
       return of(<RawDataResponse>res);
     })
   );

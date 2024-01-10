@@ -1,22 +1,26 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ChartComponent, NgApexchartsModule } from "ng-apexcharts";
 import { RawDataResponse } from '../../models/http-generic-response.model';
 
 @Component({
-  selector: 'app-card-bar',
+  selector: 'app-card-chart-bar',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NgApexchartsModule],
-  templateUrl: './card-bar.component.html',
-  styleUrl: './card-bar.component.less'
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './card-chart-bar.component.html',
+  styleUrl: './card-chart-bar.component.less'
 })
-export class CardBarComponent {
+export class CardChartBarComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
-
-  @Input() series: {key: string, description: string}[];
   @Input() dataset: RawDataResponse;
+  @Input() series: {key: string, description: string}[];
+  @Input() colors: string[];
+  @Input({required: true}) title: string;
+  @Input() subTitle: string;
+  
   constructor(){
   }
 
@@ -26,7 +30,6 @@ export class CardBarComponent {
   }
 
   ngOnChanges() {
-    debugger
     this.createChart(this.dataset,  this.getSeries());
   }   
 
@@ -48,7 +51,7 @@ export class CardBarComponent {
       legend: {
         tooltipHoverFormatter: (val: any, opts: any) => {
           return (
-            val + " - <strong>" + parseFloat(opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex]).toFixed(1) + "</strong>"
+            val + " - <strong>" + parseFloat(opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex]).toFixed(2) + "</strong>"
           );
         }
       },

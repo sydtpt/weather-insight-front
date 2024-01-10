@@ -24,6 +24,6 @@ export class HeaderComponent {
     let city = this.citiesStore.getCityByCode(city_code);
     patchState(this.citiesStore, {selectedCity: city});
     patchState(this.rawDataStore, {city: city});
-    this.router.navigate([city, "/today"]);
+    this.router.navigate([city?.city_code, "/today"]);
   }
 }

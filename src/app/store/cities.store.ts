@@ -29,8 +29,7 @@ export const CitiesStore = signalStore(
   { providedIn: "root" },
   withEntities<City>(),
   withState(initialState),
-  withComputed(({ cities }) => ({
-    // doubleCount: computed(() => cities().toLocaleString()),
+  withComputed(() => ({
     // TO DO
   })),
 
@@ -64,15 +63,9 @@ export const CitiesStore = signalStore(
     };
   }),
   withHooks({
-    onInit(store) {
-      console.log("++++++++++++++++++++++++++++++++");
-      console.log("onInit: CitiesStore");
-      console.log("++++++++++++++++++++++++++++++++");
+    onInit() {
     },
     onDestroy() {
-      console.log("++++++++++++++++++++++++++++++++");
-      console.log("onDestroy: CitiesStore");
-      console.log("++++++++++++++++++++++++++++++++");
     },
   })
 );

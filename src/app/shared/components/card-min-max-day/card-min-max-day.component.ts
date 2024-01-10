@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { RawDataResponse } from '../../models/http-generic-response.model';
@@ -7,6 +7,7 @@ import { RawDataResponse } from '../../models/http-generic-response.model';
   selector: 'app-card-min-max-day',
   standalone: true,
   imports: [CommonModule, RouterOutlet],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './card-min-max-day.component.html',
   styleUrl: './card-min-max-day.component.less',
 })

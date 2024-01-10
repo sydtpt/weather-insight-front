@@ -8,52 +8,39 @@ import {
 import { RawDataResponse } from '../../models/http-generic-response.model';
 
 @Component({
-  selector: 'app-card-same-day',
+  selector: 'app-card-chart-line',
   standalone: true,
   imports: [CommonModule, RouterOutlet, NgApexchartsModule],
-  templateUrl: './card-same-day.component.html',
-  styleUrl: './card-same-day.component.less'
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './card-chart-line.component.html',
+  styleUrl: './card-chart-line.component.less'
 })
-export class CardSameDayComponent {
+export class CardLineChartComponent {
   @ViewChild("chart") chart: ChartComponent;
   public chartOptions: Partial<any>;
-
   @Input() dataset: RawDataResponse;
+  @Input() series: {key: string, description: string}[];
+  @Input() colors: string[];
+  @Input({required: true}) title: string;
+  @Input() subTitle: string;
 
   constructor(){
     effect(()=>{})
   }
 
   ngOnInit(): void {
-    this.createChart(this.dataset)
+    this.createChart(this.dataset, this.getSeries());
   }
 
   ngOnChanges() {
-    this.createChart(this.dataset)
+    this.createChart(this.dataset, this.getSeries());
   }   
 
-  createChart(data: RawDataResponse){
-    let minTemp = Math.min( ...data.apparent_temperature_min, ...data.temperature_2m_min);
-    minTemp = minTemp >= 0 ? 0 : minTemp;
+  createChart(data: RawDataResponse, series: any){
     data.date = data.date ? data.date : [];
     this.chartOptions = {
-      colors: ['#EA3546', '#F9CE1D', '#4154f1'],
-      series: [
-        {
-          name: "Max",
-          data: Object.values(data["temperature_2m_max"])
-        },
-
-        {
-          name: "Avg",
-          data: Object.values(data["temperature_2m_mean"])
-        },
-        {
-          name: "Min",
-          data: Object.values(data["temperature_2m_min"])
-        }
-
-      ],
+      colors: this.colors,
+      series: series,
       chart: {
         height: 400,
         type: "line",
@@ -61,7 +48,7 @@ export class CardSameDayComponent {
       },
       annotations: {
         yaxis: [{
-          y: minTemp,
+          y: -50,
           y2: 0,
           borderColor: '#000',
           fillColor: '#9bd2ff',
@@ -118,7 +105,7 @@ export class CardSameDayComponent {
         },
       },
       stroke: {
-        width: 2.5
+        width: 2
       },
       grid: {
         borderColor: "#f1f1f1"
@@ -136,5 +123,13 @@ export class CardSameDayComponent {
     const month = date.toLocaleString('default', { month: 'long' });
     const formattedDate = `${day}, ${month}`;
     return `Every ${formattedDate} since 1940`;
+  }
+
+  getSeries() {
+    return this.series.map( item => {
+      return {
+        data: this.dataset[item.key], name: item.description 
+      }
+    });
   }
 }
