@@ -8,8 +8,6 @@ import { RawDataResponse } from "../models/http-generic-response.model";
 
 @Injectable({ providedIn: "root" })
 export class ReportsService {
-  public rawDataPerDaySignal = signal<RawDataResponse>(new RawDataResponse());
-  public dayForecastSignal = signal<ForecastResponse>(new ForecastResponse());
 
   /*   Move to external file   */
   private forecastApi = `https://api.open-meteo.com/v1/forecast?

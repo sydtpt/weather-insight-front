@@ -13,7 +13,7 @@ export const initialState: RawDataStateModel = {
   date: new Date(),
   forecast: new ForecastResponse(),
   values: new RawDataResponse(),
-  isLoading: true,
+  isLoading: false,
   city: {
     city_code: "",
     city_desc: "",

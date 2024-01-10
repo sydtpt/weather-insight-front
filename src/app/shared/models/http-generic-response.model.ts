@@ -46,7 +46,12 @@ export class RawDataResponse {
     if (hasNull > -1) {
       return true;
     }
+    let lastDate = this.date[this.date.length-1]
     return false;
+  }
+
+  contains(date): boolean {
+    return !!this.date.find(i => new Date(i*1000).toDateString() === date.toDateString());
   }
 
   getForecastFromDate(date: Date): ForecastResponse {
@@ -114,7 +119,8 @@ export class RawDataResponse {
         getForecastFromDate: this.getForecastFromDate,
         getMinMaxTemp: this.getMinMaxTemp,
         getMax: this.getMax,
-        getMin: this.getMin
+        getMin: this.getMin,
+        contains: this.contains
       },
     };
     return temp;

@@ -32,7 +32,7 @@ export class TodayComponent {
   date = new Date();
   formattedDate: string;
   private readonly maxDate = new Date(this.date);
-  private rawDataStore = inject(RawDataStore);
+  rawDataStore = inject(RawDataStore);
   private cityStore = inject(CitiesStore);
   dataset: RawDataResponse;
   data2 = signal<number>(0);
@@ -64,6 +64,7 @@ export class TodayComponent {
 
   constructor() {
     effect(() => {
+      
       this.date = this.rawDataStore.date();
       this.rawDataStore.values();
       this.rawDataStore.getHistoricalDDMM(this.date).then((res) => {
@@ -93,7 +94,7 @@ export class TodayComponent {
     const timestamp = new Date(date);
     this.date = new Date(timestamp);
     this.formattedDate = this.getDateFormatted(this.date);
-    patchState(this.rawDataStore, { date: this.date });
+    patchState(this.rawDataStore, {isLoading:true, date: this.date });
   }
 
   getMaxDayForecast() {

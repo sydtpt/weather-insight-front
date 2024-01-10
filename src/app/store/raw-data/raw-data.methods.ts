@@ -16,44 +16,67 @@ import { RawDataStateModel } from "./raw-data.model";
 import { ForecastResponse } from "../../shared/models/forecast-response.model";
 import { RawDataResponse } from "../../shared/models/http-generic-response.model";
 import { ReportsService } from "../../shared/services/reports.service";
+import { rxMethod } from "@ngrx/signals/rxjs-interop";
 
 export function withRawDataMethods() {
   return signalStoreFeature(
     { state: type<RawDataStateModel>() },
     withMethods((state, reportsService = inject(ReportsService)) => ({
       async getHistoricalDDMM(date: Date, city_code?: string) {
-        city_code = city_code ? city_code: state.city().city_code;
-        let call = fetchDataPerDDMM(date,city_code, reportsService, state);
+        city_code = city_code ? city_code : state.city().city_code;
+        let call = fetchDataPerDDMM(date, city_code, reportsService, state);
         let res = await lastValueFrom(call);
+        patchState(state, { isLoading: false });
         return res;
       },
-      getMax(key: string) {
-        return Math.max(state.values[key]);
+      async getHistoricalDDMM2(date: Date, city_code?: string) {
+        patchState(state, {isLoading: true})
+        city_code = city_code ? city_code : state.city().city_code;
+        let call = fetchDataPerDDMM(date, city_code, reportsService, state);
+        let res = await lastValueFrom(call);
+        patchState(state, { isLoading: false });
+        return res;
       },
 
+      getMax(key: string) {
+        debugger
+        return Math.max(state.values[key]);
+      },
       getMin(key: string) {
         return Math.min(state.values[key]);
-      }
+      },
 
+      contains(date: Date) {
+        return !!state.values.date().find(i => new Date(i*1000).toDateString() === date.toDateString());
+      },
     }))
   );
 }
 
-
 function mergeForecastToRawDay(
   res: RawDataResponse,
-  forecastRes: ForecastResponse
+  forecastRes: ForecastResponse, 
+  date: Date
 ) {
-  res.apparent_temperature_max.push(
-    forecastRes.daily.apparent_temperature_max[0]
-  );
-  res.apparent_temperature_min.push(
-    forecastRes.daily.apparent_temperature_min[0]
-  );
-  res.temperature_2m_max.push(forecastRes.daily.temperature_2m_max[0]);
-  res.temperature_2m_min.push(forecastRes.daily.temperature_2m_min[0]);
-  res.date?.push(forecastRes.daily.time[0] * 1000);
-  res.date?.push(forecastRes.daily.time[0] * 1000);
+  if (res.hasMissingData()){
+    let missingIndex = res.apparent_temperature_max.findIndex((item) => !item );
+    res.apparent_temperature_max[missingIndex] = forecastRes.daily.apparent_temperature_max[0];
+    res.apparent_temperature_min[missingIndex] = forecastRes.daily.apparent_temperature_min[0];
+    res.temperature_2m_max[missingIndex] = forecastRes.daily.temperature_2m_max[0];
+    res.temperature_2m_min[missingIndex] = forecastRes.daily.temperature_2m_min[0];
+    res.date[missingIndex] = forecastRes.daily.time[0] * 1000;
+  } else {
+    res.apparent_temperature_max.push(
+      forecastRes.daily.apparent_temperature_max[0]
+    );
+    res.apparent_temperature_min.push(
+      forecastRes.daily.apparent_temperature_min[0]
+    );
+    res.temperature_2m_max.push(forecastRes.daily.temperature_2m_max[0]);
+    res.temperature_2m_min.push(forecastRes.daily.temperature_2m_min[0]);
+    res.date?.push(forecastRes.daily.time[0] * 1000);
+    res.date?.push(forecastRes.daily.time[0] * 1000);
+  }
   return res;
 }
 
@@ -81,7 +104,7 @@ function fetchDataPerDDMM(
   reportsService: ReportsService,
   state
 ): Observable<RawDataResponse> {
-  city_code = city_code !== "" ? city_code :state.city.city_code();
+  city_code = city_code !== "" ? city_code : state.city.city_code();
   let call = reportsService.getRawDataPerDay(date, city_code).pipe(
     mergeMap((res: RawDataResponse) => {
       const dateLimit = new Date();
@@ -115,15 +138,16 @@ function fetchDataPerDDMM(
                     2;
                 forecastResponse.current.apparent_temperature = feelsLike;
               }
-              if (res.hasMissingData() && date < today) {
-                res = mergeForecastToRawDay(res, forecastResponse);
+              
+              if (res.hasMissingData() || !res.contains(date)) {
+                res = mergeForecastToRawDay(res, forecastResponse, date);
               }
               patchState(state, { forecast: forecastResponse });
               return res;
             })
           );
       }
-      patchState(state, { values: res, forecast: res.getForecastFromDate(date) });
+      patchState(state, { forecast: res.getForecastFromDate(date) });
       return of(<RawDataResponse>res);
     })
   );
