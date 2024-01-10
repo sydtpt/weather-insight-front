@@ -23,7 +23,7 @@ class CurrentUnits {
 export class ForecastResponse {
   current: ICurrent;
   currentUnits?: CurrentUnits;
-  daily: RawDataResponse;
+  daily: IDaily;
   dailyUnits?: Units;
 }
 
@@ -40,9 +40,22 @@ interface ICurrent {
   snowfall: number;
   surface_pressure: number;
   temperature_2m: number;
-  time: number;
+  time: Date;
   weather_code: number;
   wind_direction_10m: number;
   wind_gusts_10m: number;
   wind_speed_10m: number;
+}
+
+
+interface IDaily {
+  apparent_temperature_max: number[];
+  apparent_temperature_min: number[];
+  sunrise: Date[];
+  sunset: Date[];
+  temperature_2m_max: number[];
+  temperature_2m_min: number[];
+  time: Date[];
+  temperature_2m_mean: number[];
+  apparent_temperature_mean: number[]
 }

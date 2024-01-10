@@ -59,7 +59,7 @@ export class CardTempDayComponent {
     if (!forecaset) {
         return "";
     }
-    const date = new Date(forecaset.current.time * 1000)
+    const date = forecaset.current.time;
     if (new Date().toDateString() === date.toDateString()) {
       return "Today";
     }
@@ -76,8 +76,9 @@ export class CardTempDayComponent {
     if (!forecaset) {
         return "";
     }
+    debugger
     if(this.dataset?.daily) {
-      let sunset = new Date(this.dataset?.daily.sunset[0]*1000);
+      let sunset = this.dataset?.daily.sunset[0];
       return sunset.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5);
     } else {
       return "";
@@ -86,7 +87,7 @@ export class CardTempDayComponent {
 
   get sunrise(){
     if(this.dataset?.daily) {
-      let sunrise = new Date(this.dataset?.daily.sunrise[0]*1000);
+      let sunrise = this.dataset?.daily.sunrise[0];
       return sunrise.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
@@ -107,7 +108,7 @@ export class CardTempDayComponent {
     if (!forecaset) {
         return "";
     }
-    return Moon.lunarPhase(new Date(forecaset.current.time *1000));
+    return Moon.lunarPhase(forecaset.current.time);
   }
 
   getMoonPhaseEmoji() {
@@ -115,7 +116,7 @@ export class CardTempDayComponent {
     if (!forecaset) {
         return "";
     }
-    return Moon.lunarPhaseEmoji(new Date(forecaset.current.time *1000));
+    return Moon.lunarPhaseEmoji(forecaset.current.time);
   }
 
 }

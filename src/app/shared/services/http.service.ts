@@ -1,6 +1,6 @@
 import { HttpClient, HttpParamsOptions } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { ForecastResponse } from '../models/forecast-response.model';
 
 @Injectable({providedIn: 'root'})
@@ -17,6 +17,15 @@ export class HttpService {
      }
 
      getForecast(endpoint: string, opt?): Observable<ForecastResponse> {
-      return this.http.get<ForecastResponse>(endpoint);
+      return this.http.get(endpoint).pipe(
+         map(res => {
+           debugger
+           res["current"].time = new Date(res["current"].time *1000);
+           res["daily"].sunrise = res["daily"].sunrise.map(i => new Date(i*1000));
+           res["daily"].sunset = res["daily"].sunset.map(i => new Date(i*1000));
+           res["daily"].time = res["daily"].time.map(i => new Date(i*1000));
+           return <ForecastResponse>res;
+         })
+      )
    }
 }

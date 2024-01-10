@@ -16,7 +16,6 @@ import { RawDataStateModel } from "./raw-data.model";
 import { ForecastResponse } from "../../shared/models/forecast-response.model";
 import { RawDataResponse } from "../../shared/models/http-generic-response.model";
 import { ReportsService } from "../../shared/services/reports.service";
-import { rxMethod } from "@ngrx/signals/rxjs-interop";
 
 export function withRawDataMethods() {
   return signalStoreFeature(
@@ -47,7 +46,7 @@ export function withRawDataMethods() {
       },
 
       contains(date: Date) {
-        return !!state.values.date().find(i => new Date(i*1000).toDateString() === date.toDateString());
+        return !!state.values.date().find(i => i.toDateString() === date.toDateString());
       },
     }))
   );
@@ -64,7 +63,7 @@ function mergeForecastToRawDay(
     res.apparent_temperature_min[missingIndex] = forecastRes.daily.apparent_temperature_min[0];
     res.temperature_2m_max[missingIndex] = forecastRes.daily.temperature_2m_max[0];
     res.temperature_2m_min[missingIndex] = forecastRes.daily.temperature_2m_min[0];
-    res.date[missingIndex] = forecastRes.daily.time[0] * 1000;
+    res.date[missingIndex] = new Date(forecastRes.daily.time[0]);
   } else {
     res.apparent_temperature_max.push(
       forecastRes.daily.apparent_temperature_max[0]
@@ -74,8 +73,8 @@ function mergeForecastToRawDay(
     );
     res.temperature_2m_max.push(forecastRes.daily.temperature_2m_max[0]);
     res.temperature_2m_min.push(forecastRes.daily.temperature_2m_min[0]);
-    res.date?.push(forecastRes.daily.time[0] * 1000);
-    res.date?.push(forecastRes.daily.time[0] * 1000);
+    res.date?.push(new Date(forecastRes.daily.time[0]));
+    res.date?.push(new Date(forecastRes.daily.time[0]));
   }
   return res;
 }
@@ -116,14 +115,15 @@ function fetchDataPerDDMM(
           .getDayForecast(date, state.city.latitude(), state.city.longitude())
           .pipe(
             map((forecastResponse: ForecastResponse) => {
+              let date = forecastResponse.daily?.sunset[0];
               const today = new Date();
               const isToday =
                 today.getFullYear() === date.getFullYear() &&
                 today.getMonth() === date.getMonth() &&
                 today.getDate() === date.getDate();
-
+                
               if (!isToday) {
-                forecastResponse.current.time = date.getTime() / 1000;
+                forecastResponse.current.time = new Date(date);
                 let mean = forecastResponse.daily.temperature_2m_mean
                   ? forecastResponse.daily.temperature_2m_mean[0]
                   : (forecastResponse.daily.temperature_2m_max[0] +
@@ -138,7 +138,7 @@ function fetchDataPerDDMM(
                     2;
                 forecastResponse.current.apparent_temperature = feelsLike;
               }
-              
+              debugger
               if (res.hasMissingData() || !res.contains(date)) {
                 res = mergeForecastToRawDay(res, forecastResponse, date);
               }
@@ -148,7 +148,7 @@ function fetchDataPerDDMM(
           );
       }
       patchState(state, { forecast: res.getForecastFromDate(date) });
-      return of(<RawDataResponse>res);
+      return of(<RawDataResponse>new RawDataResponse(res));
     })
   );
   return call;

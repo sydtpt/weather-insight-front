@@ -4,7 +4,7 @@ export class RawDataResponse {
   apparent_temperature_max: number[];
   apparent_temperature_min: number[];
   apparent_temperature_mean: number[];
-  date: number[];
+  date: Date[];
   daylight_duration?: number[];
   et0_fao_evapotranspiration?: number[];
   precipitation_hours?: number[];
@@ -15,13 +15,13 @@ export class RawDataResponse {
   shortwave_radiation_sum?: number[];
   snowfall_sum?: number[];
   solar_radiation_sum?: number[];
-  sunrise: number[];
-  sunset: number[];
+  sunrise: Date[];
+  sunset: Date[];
   sunshine_duration?: number[];
   temperature_2m_max: number[];
   temperature_2m_min: number[];
   temperature_2m_mean: number[];
-  time: number[];
+  time: Date[];
   uv_index_clear_sky_max?: number[];
   uv_index_max?: number[];
   weather_code: number[];
@@ -34,8 +34,23 @@ export class RawDataResponse {
     if (!data) {
       return;
     }
+    debugger
     for (let field of Object.keys(data)) {
       this[field] = Object.values(data[field]);
+
+      if(field === "date") {
+        this.date = Object.values(data[field]).map(i => new Date(i as number *  1000));
+      }
+  
+      if(field === "sunset") {
+        this.sunset = Object.values(data[field]).map(i => new Date(i as number *  1000));
+      }
+      if(data["sunrise"]) {
+        this.sunrise = Object.values(data[field]).map(i => new Date(i as number *  1000));
+      }
+      if(data["time"]) {
+        this.time = Object.values(data[field]).map(i => new Date(i as number *  1000));
+      }
     }
   }
 
@@ -46,25 +61,25 @@ export class RawDataResponse {
     if (hasNull > -1) {
       return true;
     }
-    let lastDate = this.date[this.date.length-1]
     return false;
   }
 
-  contains(date): boolean {
-    return !!this.date.find(i => new Date(i*1000).toDateString() === date.toDateString());
+  contains(date: Date): boolean {
+    return !!this.date.find(i => i.toDateString() === date.toDateString());
   }
 
   getForecastFromDate(date: Date): ForecastResponse {
     let index = this.date?.findIndex(
-      (item) => new Date(item).toDateString() === date.toDateString()
+      (item) => item.toDateString() === date.toDateString()
     );
     index = index !== undefined ? index : -1;
     if (index < 0) {
       return new ForecastResponse();
     }
+    debugger
     let temp = {
       current: {
-        time: date.getTime() / 1000,
+        time: date,
         weather_code: this.weather_code[index],
         temperature_2m:
           (this.temperature_2m_max[index] + this.temperature_2m_min[index]) / 2,
@@ -102,13 +117,13 @@ export class RawDataResponse {
         // shortwave_radiation_sum: [this.shortwave_radiation_sum[index]],
         // snowfall_sum: [this.snowfall_sum[index]],
         // solar_radiation_sum: [this.solar_radiation_sum[index]],
-        sunrise: [this.sunrise[index]],
-        sunset: [this.sunset[index]],
+        sunrise: [ this.sunrise[index] ],
+        sunset: [ this.sunset[index] ],
         // sunshine_duration: [this.sunshine_duration[index]],
         temperature_2m_max: [this.temperature_2m_max[index]],
         temperature_2m_min: [this.temperature_2m_min[index]],
         temperature_2m_mean: [this.temperature_2m_mean[index]],
-        time: [date.getTime() / 1000],
+        time: [this.date[index]],
         // uv_index_clear_sky_max: [this.uv_index_clear_sky_max[index]],
         // uv_index_max: [this.uv_index_max[index]],
         weather_code: [this.weather_code[index]],
@@ -141,19 +156,19 @@ export class RawDataResponse {
     let min = Math.min(...minValues);
     let roundMin = Math.round(Math.abs(min)); // Arredonda o número para o inteiro mais próximo
     roundMin *= Math.sign(min);
-    let minDay = Object.values(this.temperature_2m_min).findIndex(
+    let minDayIndex = Object.values(this.temperature_2m_min).findIndex(
       (i) => i === min
     );
-    minDay = this.date ? this.date[minDay] : 0;
+    let minDay = this.date ? this.date[minDayIndex] : new Date(0);
 
     let maxValues: number[] = Object.values(this.temperature_2m_max);
     let max = Math.max(...maxValues);
     let roundMax = Math.round(Math.abs(max)); // Arredonda o número para o inteiro mais próximo
     roundMax *= Math.sign(max);
-    let maxDay = Object.values(this.temperature_2m_max).findIndex(
+    let maxDayIndex = Object.values(this.temperature_2m_max).findIndex(
       (i) => i === max
     );
-    maxDay = this.date ? this.date[maxDay] : 0;
+    let maxDay = this.date ? this.date[maxDayIndex] : new Date(0);
     let avgs: any = Object.values(this.apparent_temperature_mean);
 
     const LIMIT_AVG_YEARS = 20;
@@ -163,8 +178,8 @@ export class RawDataResponse {
     let temp = {
       min: roundMin,
       max: roundMax,
-      minDay: new Date(minDay).getFullYear(),
-      maxDay: new Date(maxDay).getFullYear(),
+      minDay: minDay.getFullYear(),
+      maxDay: maxDay.getFullYear(),
       avg: avg,
     };
     return temp;
