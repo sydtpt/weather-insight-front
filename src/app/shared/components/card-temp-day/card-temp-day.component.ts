@@ -76,7 +76,6 @@ export class CardTempDayComponent {
     if (!forecaset) {
         return "";
     }
-    debugger
     if(this.dataset?.daily) {
       let sunset = this.dataset?.daily.sunset[0];
       return sunset.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5);

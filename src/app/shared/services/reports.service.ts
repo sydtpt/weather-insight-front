@@ -1,14 +1,12 @@
 import { Injectable, signal } from "@angular/core";
 import { HttpService } from "./http.service";
-import { map, } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { ForecastResponse } from "../models/forecast-response.model";
 import { RawDataResponse } from "../models/http-generic-response.model";
 
-
 @Injectable({ providedIn: "root" })
 export class ReportsService {
-
   /*   Move to external file   */
   private forecastApi = `https://api.open-meteo.com/v1/forecast?
 latitude={{lat}}&longitude={{long}}
@@ -19,24 +17,51 @@ latitude={{lat}}&longitude={{long}}
 &end_date={{end_date}}
 &timeformat=unixtime`;
 
-  constructor(private http: HttpService) {
-  }
+  constructor(private http: HttpService) {}
 
-
-
-  getRawDataPerDay(newDate: Date, city_code: string): Observable<RawDataResponse> {
+  getRawDataPerDay(
+    newDate: Date,
+    city_code: string
+  ): Observable<RawDataResponse> {
     let day = newDate.getDate();
     let month = newDate.getMonth() + 1;
     let url = `history/${city_code}?dd=${day}&mm=${month}`;
     return this.http.get(url).pipe(
       map((res) => {
-          return new RawDataResponse(res);
-      }),
+        for (let field of Object.keys(res)) {
+          res[field] = Object.values(res[field]);
+
+          if (field === "date") {
+            res["date"] = Object.values(res[field]).map(
+              (i) => new Date((i as number))
+            );
+          }
+          if (field === "sunset") {
+            res["sunset"] = Object.values(res[field]).map(
+              (i) => new Date((i as number))
+            );
+          }
+          if (field === "sunrise") {
+            res["sunrise"] = Object.values(res[field]).map(
+              (i) => new Date((i as number))
+            );
+          }
+          if (field === "time") {
+            res["time"] = Object.values(res[field]).map(
+              (i) => new Date((i as number))
+            );
+          }
+        }
+        return <RawDataResponse>res;
+      })
     );
   }
 
-
-  getDayForecast(selectedDate: Date, latitude: string, longitude: string): Observable<ForecastResponse> {
+  getDayForecast(
+    selectedDate: Date,
+    latitude: string,
+    longitude: string
+  ): Observable<ForecastResponse> {
     let api = this.forecastApi
       .replace("{{lat}}", latitude)
       .replace("{{long}}", longitude)
@@ -44,5 +69,6 @@ latitude={{lat}}&longitude={{long}}
       .replace("{{end_date}}", selectedDate.toISOString().split("T")[0]);
     return this.http.getForecast(api);
   }
-  
+
+  private convertResponse() {}
 }

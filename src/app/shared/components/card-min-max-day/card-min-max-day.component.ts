@@ -16,7 +16,6 @@ export class CardMinMaxDayComponent {
 
 
   ngOnInit() {
-    console.log(this.dataset);
   }
 
 

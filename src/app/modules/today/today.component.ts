@@ -2,7 +2,6 @@ import { Component, Input, effect, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { CardMinMaxDayComponent } from "../../shared/components/card-min-max-day/card-min-max-day.component";
-import { CardMoonPhaseComponent } from "../../shared/components/card-moon-phase/card-moon-phase.component";
 import { CardTempDayComponent } from "../../shared/components/card-temp-day/card-temp-day.component";
 import { FormsModule } from "@angular/forms";
 import { patchState } from "@ngrx/signals";
@@ -14,7 +13,6 @@ import { CardLineChartComponent } from "../../shared/components/card-chart-line/
 import { CardChartBarComponent } from "../../shared/components/card-chart-bar/card-chart-bar.component";
 
 const cards = [
-  CardMoonPhaseComponent,
   CardLineChartComponent,
   CardMinMaxDayComponent,
   CardTempDayComponent,
@@ -44,19 +42,18 @@ export class TodayComponent {
   precipitationColors: ['#EA3546', '#F9CE1D', '#4154f1'];
 
 
-  temperatureSeries = [
+  temperatureMaxSeries = [
     { key: "temperature_2m_max", description: "Max" },
-    { key: "temperature_2m_mean", description: "Avg" },
-    { key: "temperature_2m_min", description: "Min" },
+    { key: "apparent_temperature_max", description: "Feels Like" }
   ];
-  temperatureColors = ['#EA3546', '#F9CE1D', '#4154f1'];
+  temperatureMaxColors = ['#EA3546', '#F9CE1D', '#4154f1'];
 
-  feelsLikeSeries = [
-    { key: "apparent_temperature_max", description: "Max" },
-    { key: "apparent_temperature_mean", description: "Avg" },
-    { key: "apparent_temperature_min", description: "Min" },
+  temperatureMinSeries = [
+    { key: "temperature_2m_max", description: "Max" },
+    { key: "apparent_temperature_max", description: "Feels like" },
   ];
-  feelsLikeColors = ['#EA3546', '#F9CE1D', '#4154f1'];
+  temperatureMinColors = ['#279EFF', '#F9CE1D', '#4154f1'];
+
 
   forecast: ForecastResponse;
   // TO DO
@@ -69,7 +66,6 @@ export class TodayComponent {
       this.rawDataStore.values();
       this.rawDataStore.getHistoricalDDMM(this.date).then((res) => {
         this.dataset = res;
-
         this.forecast = this.rawDataStore.forecast();
       });
     });
@@ -128,6 +124,16 @@ export class TodayComponent {
     const mes = ("0" + (date.getMonth() + 1)).slice(-2); // Adiciona 1 ao mês (pois janeiro é 0) e formata para 2 dígitos
     const dia = ("0" + date.getDate()).slice(-2); // Formata para 2 dígitos
     return `${ano}-${mes}-${dia}`;
+  }
+
+
+  getSubtitleDescription() {
+    const date = new Date(this.date)
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const formattedDate = `${day}, ${month}`;
+    console.log(`Every ${formattedDate} since 1940`)
+    return `Every ${formattedDate} since 1940`;
   }
 
 }

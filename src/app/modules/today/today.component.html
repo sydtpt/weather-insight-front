@@ -1,8 +1,7 @@
-
 @if (rawDataStore.isLoading()) {
-  <div class="loading-state">
-    <div class="loader"></div>
-  </div>
+<div class="loading-state">
+  <div class="loader"></div>
+</div>
 }
 <div class="pagetitle">
   <div class="d-flex">
@@ -16,9 +15,12 @@
       </nav>
     </div>
     <div class="col-7 d-flex col-md-4 mt-2 mb-3 justify-content-end form-group">
-      <button (click)="previousDay()" type="button" class="btn btn-primary btn-sm  d-none d-md-block"><i class="bi bi-arrow-left"></i></button>
-      <input type="date" min="1941-01-01" max="{{getMaxDayForecast()}}" [ngModel]="formattedDate" (ngModelChange)="changeDay($event)" class="form-control ms-1 me-1 w-75">
-      <button (click)="nextDay()" [disabled]="disableNext()" class="btn btn-primary btn-sm  d-none d-md-block" ><i class="bi bi-arrow-right"></i></button>
+      <button (click)="previousDay()" type="button" class="btn btn-primary btn-sm  d-none d-md-block"><i
+          class="bi bi-arrow-left"></i></button>
+      <input type="date" min="1941-01-01" max="{{getMaxDayForecast()}}" [ngModel]="formattedDate"
+        (ngModelChange)="changeDay($event)" class="form-control ms-1 me-1 w-75">
+      <button (click)="nextDay()" [disabled]="disableNext()" class="btn btn-primary btn-sm  d-none d-md-block"><i
+          class="bi bi-arrow-right"></i></button>
     </div>
   </div>
 </div><!-- End Page Title -->
@@ -30,23 +32,34 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-xxl-5 col-md-6">
-          <app-card-temp-day [dataset]="forecast" ></app-card-temp-day>
+          <app-card-temp-day [dataset]="forecast"></app-card-temp-day>
         </div>
         <div class="col-xxl-7 col-md-6">
           <app-card-min-max-day [dataset]="dataset"></app-card-min-max-day>
         </div>
 
         <div class="col-12">
-            <app-card-chart-line title="Temperature" [dataset]="dataset" [colors]="temperatureColors" [series]="temperatureSeries"></app-card-chart-line>
+          <app-card-chart-line
+            title="Max Temperature" 
+            [subTitle]="getSubtitleDescription()"
+            [dataset]="dataset" 
+            [colors]="temperatureMaxColors"
+            [series]="temperatureMaxSeries"></app-card-chart-line>
         </div>
 
         <div class="col-12">
-          <app-card-chart-line title="Feels like" [dataset]="dataset" [colors]="feelsLikeColors" [series]="feelsLikeSeries"></app-card-chart-line>
-      </div>
+          <app-card-chart-line 
+            title="Min Temperature" 
+            [dataset]="dataset" 
+            [subTitle]="getSubtitleDescription()"
+            [colors]="temperatureMinColors"
+            [series]="temperatureMinSeries"></app-card-chart-line>
+        </div>
 
         <div class="col-12">
-          <app-card-chart-bar  title="Precipitation"  [dataset]="dataset" [series]="precipitationSeries" ></app-card-chart-bar>
-      </div>
+          <app-card-chart-bar title="Precipitation" [dataset]="dataset"
+            [series]="precipitationSeries"></app-card-chart-bar>
+        </div>
 
       </div>
     </div><!-- End Left side columns -->

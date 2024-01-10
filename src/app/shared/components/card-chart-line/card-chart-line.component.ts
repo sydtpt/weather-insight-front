@@ -114,17 +114,6 @@ export class CardLineChartComponent {
   }
   
 
-  getTodayDescription() {
-    if(!this.dataset || !this.dataset["date"]) {
-      return "";
-    }
-    const date = new Date(this.dataset["date"][0])
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'long' });
-    const formattedDate = `${day}, ${month}`;
-    return `Every ${formattedDate} since 1940`;
-  }
-
   getSeries() {
     return this.series.map( item => {
       return {
