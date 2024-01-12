@@ -20,7 +20,7 @@ export function withRawDataMethods() {
         city_code = city_code ? city_code : state.city().city_code;
         let call = fetchDataPerDDMM(date, city_code, reportsService, state);
         let res = await lastValueFrom(call);
-        patchState(state, { isLoading: false });
+        patchState(state, { isLoading: false, values: res });
         return res;
       },
 
@@ -68,7 +68,6 @@ function mergeForecastToRawDay(
     );
     res.temperature_2m_max.push(forecastRes.daily.temperature_2m_max[0]);
     res.temperature_2m_min.push(forecastRes.daily.temperature_2m_min[0]);
-    res.date?.push(new Date(forecastRes.daily.time[0]));
     res.date?.push(new Date(forecastRes.daily.time[0]));
   }
   return res;

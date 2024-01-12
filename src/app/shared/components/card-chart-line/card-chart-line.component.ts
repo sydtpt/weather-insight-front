@@ -3,8 +3,6 @@ import {
   Component,
   Input,
   ViewChild,
-  effect,
-  inject,
   signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -13,7 +11,6 @@ import { ChartComponent, NgApexchartsModule } from "ng-apexcharts";
 import { datasetInit } from "../../models/http-generic-response.model";
 import { Card, initialCard } from "../../models/card.model";
 import { Chart } from "../../utils/chart-parser";
-import { dalayEmit } from "../../utils/utils";
 
 @Component({
   selector: "app-card-chart-line",
@@ -42,22 +39,17 @@ export class CardLineChartComponent {
       chartOptions.colors = colors;
     }
 
-    //dalayEmit(chartOptions, this.card().series)
-    // chartOptions.series = this.card().series;
     chartOptions.xaxis.categories = <any>(
       Object.values(this.card().categories).map((day: any) =>
         new Date(day).getFullYear().toString().slice(-2)
       )
     );
+    chartOptions.series = <any>this.card().series;
     this.chartOptions = chartOptions;
     /*Object.keys(this.card().series).forEach(key => {
       debugger
        dalayEmit(chartOptions, this.card().series[key])
     });*/
-    chartOptions.series = <any>this.card().series;
-
-    console.log(this.card().series);
-    console.log(chartOptions);
     this.isLoading.set(false);
   }
 }

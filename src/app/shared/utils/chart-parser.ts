@@ -29,27 +29,8 @@ export class Chart  {
 
     events: {
       animationEnd: function (chartCtx) {
-        debugger
-        const newData1 = chartCtx.w.config.series[0].data.slice();
-        newData1.shift();
-        const newData2 = chartCtx.w.config.series[1].data.slice();
-        newData2.shift();
-        window.setTimeout(function () {
-          chartCtx.updateOptions(
-            {
-              series: [
-                {
-                  data: newData1
-                },
-                {
-                  data: newData2
-                }
-              ],
-            },
-            false,
-            false
-          );
-        }, 300);
+        let series = chartCtx.w.config.series;
+        let daly = 10;
       }
     },
   

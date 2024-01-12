@@ -8,10 +8,11 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { ChartComponent, NgApexchartsModule } from "ng-apexcharts";
-import { RawDataResponse, datasetInit } from "../../models/http-generic-response.model";
+import {
+  datasetInit,
+} from "../../models/http-generic-response.model";
 import { Card, initialCard } from "../../models/card.model";
 import { Chart } from "../../utils/chart-parser";
-import { dalayEmit } from "../../utils/utils";
 
 @Component({
   selector: "app-card-chart-bar",
@@ -42,13 +43,12 @@ export class CardChartBarComponent {
     /*Object.keys(this.card().series).forEach(key => {
       dalayEmit(chartOptions, this.card().series[key])
     });*/
-    chartOptions.series = <any>this.card().series;
     chartOptions.xaxis.categories = <any>(
       Object.values(this.card().categories).map((day: any) =>
         new Date(day).getFullYear().toString().slice(-2)
       )
     );
-    console.log(chartOptions);
+    chartOptions.series = <any>this.card().series;
     this.chartOptions = chartOptions;
     this.isLoading.set(false);
   }
