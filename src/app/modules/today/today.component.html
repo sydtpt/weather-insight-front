@@ -1,7 +1,7 @@
 
-<div class="pagetitle">
+<div class="pagetitle header-filter">
   <div class="d-flex">
-    <div class="col-5 col-md-8 ">
+    <div class="col-5 col-md-3 mt-1">
       <h1>Today</h1>
       <nav>
         <ol class="breadcrumb">
@@ -10,7 +10,11 @@
         </ol>
       </nav>
     </div>
-    <div class="col-7 d-flex col-md-4 mt-2 mb-3 justify-content-end form-group">
+    <div class="col-7 d-flex col-md-9 mt-1 mb-3 mt-1 justify-content-end align-items-center form-group">
+
+      <label class="pe-2 text-secondary">Limit years:</label>
+      <input (input)="interceptRange($event)" value="{{limitYearFrom}}" type="range" min="1940" max="2015" step="10" [value]="0" class="form-range pe-4" id="customRange1">
+
       <button (click)="previousDay()" type="button" class="btn btn-primary btn-sm  d-none d-md-block"><i
           class="bi bi-arrow-left"></i></button>
       <input type="date" min="1941-01-01" max="{{getMaxDayForecast()}}" [ngModel]="formattedDate"
@@ -42,6 +46,12 @@
           <app-card-chart-line [card]="minTemperature()"></app-card-chart-line>
         </div>
 
+        <div class="col-12">
+          <app-card-chart-bar  [card]="precipitation()"></app-card-chart-bar>
+        </div>
+        <div class="col-12">
+          <app-card-chart-bar  [card]="precipitation()"></app-card-chart-bar>
+        </div>
         <div class="col-12">
           <app-card-chart-bar  [card]="precipitation()"></app-card-chart-bar>
         </div>

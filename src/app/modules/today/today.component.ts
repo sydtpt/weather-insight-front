@@ -33,12 +33,14 @@ const cards = [
 export class TodayComponent {
   rawDataStore = inject(RawDataStore);
   private cityStore = inject(CitiesStore);
-  
+  values;
   date = new Date();
   formattedDate: string;
   readonly maxDate = new Date(this.date);
 
-  
+
+  originalData: RawDataResponse;
+  limitYearFrom = 1940;
   // Charts Signal's
   data =signal<RawDataResponse>(datasetInit);
   forecast = signal<ForecastResponse>(forecastInit);
@@ -49,16 +51,23 @@ export class TodayComponent {
 
   constructor() {
     effect(() => {
-      this.date = this.rawDataStore.date();
-      this.rawDataStore.getHistoricalDDMM(this.date).then((res) => {
-        let temp = this.rawDataStore.forecast();
-        this.data.set(res);
-        this.forecast.set(temp);
-        this.precipitation.set(this.getPrecipitationCard())
-        this.maxTemperature.set(this.getMaxTemperatureCard())
-        this.minTemperature.set(this.getMinTemperatureCard())
-        patchState(this.rawDataStore, {isLoading: false});
-      });
+      this.update();
+    });
+    
+  }
+
+  update() {
+    this.date = this.rawDataStore.date();
+    this.rawDataStore.getHistoricalDDMM(this.date).then((res) => {
+      this.originalData = res;
+      let temp = this.rawDataStore.forecast();
+      this.data.set(res);
+      this.forecast.set(temp);
+      this.limitYears(this.limitYearFrom);
+      this.precipitation.set(this.getPrecipitationCard())
+      this.maxTemperature.set(this.getMaxTemperatureCard())
+      this.minTemperature.set(this.getMinTemperatureCard())
+      patchState(this.rawDataStore, {isLoading: false});
     });
   }
 
@@ -83,6 +92,32 @@ export class TodayComponent {
     this.formattedDate = this.getDateFormatted(this.date);
     patchState(this.rawDataStore, {isLoading:true, date: this.date });
   }
+
+  interceptRange(event) {
+    let year = parseInt(event.srcElement.value);
+    this.limitYears(year)
+  }
+
+  limitYears(year: number) {
+    let limitAfter = year;
+    this.limitYearFrom = limitAfter;
+    let dateList = this.originalData.date;
+    let startFrom = dateList.filter(date => date.getFullYear() >= limitAfter).length;
+    let dataArray = {...this.originalData};
+    let keys = Object.keys(dataArray);
+    for (let key of keys) {
+      if (typeof(dataArray[key]) == "object") {
+        dataArray[key] = dataArray[key].slice( dataArray[key].length - startFrom, dataArray[key].length)
+      }
+      
+    }
+    console.log(dataArray);
+    this.data.set(dataArray)
+    this.precipitation.set(this.getPrecipitationCard())
+    this.maxTemperature.set(this.getMaxTemperatureCard())
+    this.minTemperature.set(this.getMinTemperatureCard())
+  }
+
 
   getMaxDayForecast() {
     return this.maxDate.toISOString().split("T")[0];
@@ -175,6 +210,10 @@ export class TodayComponent {
   }
 
   private getSeries(series: {key: string, description}[]) {
-    return datasetToChartSeries(this.data(), series);
+    return datasetToChartSeries(this.originalData, series);
   }
+
+  dacadeFilters = [];
 }
+
+
