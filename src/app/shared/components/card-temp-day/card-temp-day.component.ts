@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { WEATHER_CODES as weatherCodes } from "../../models/weather-codes.model"
-import { ForecastResponse } from "../../models/forecast-response.model";
+import { ForecastResponse, forecastInit } from "../../models/forecast-response.model";
 import { Moon } from "lunarphase-js";
 import { CitiesStore } from "../../../store/cities.store";
 
@@ -16,25 +16,28 @@ import { CitiesStore } from "../../../store/cities.store";
 })
 export class CardTempDayComponent {
   citiesStore = inject(CitiesStore);
-  @Input() dataset: ForecastResponse | undefined;
+  forecast =  signal<ForecastResponse>(forecastInit);
 
-  constructor() {
+  @Input({required: true, alias: "forecast"}) set _forecast(forecast: ForecastResponse) {
+    this.forecast.set(forecast);
+    this.isLoading.set(false);
   }
+  isLoading = signal(true);
 
   ngOnInit(): void {
 
   }
 
   getTemp() {
-    return this.dataset?.current.temperature_2m.toFixed();
+    return this.forecast().current.temperature_2m.toFixed();
   }
 
   getFeelsLike() {
-    return this.dataset?.current.apparent_temperature.toFixed();
+    return this.forecast().current.apparent_temperature.toFixed();
   }
 
   getEmojyByCodeWeatherCode(weather_code?) {
-    let forecaset = this.dataset;
+    let forecaset = this.forecast();
     if (!forecaset) {
         return "";
     }
@@ -43,19 +46,19 @@ export class CardTempDayComponent {
 
 
   getWind() {
-    return this.dataset?.current.wind_speed_10m.toFixed();
+    return this.forecast().current.wind_speed_10m.toFixed();
   }
 
   getMaxTemp(){
-    return this.dataset?.daily.temperature_2m_max[0].toFixed();
+    return this.forecast().daily.temperature_2m_max[0].toFixed();
   }
 
   getMinTemp(){
-    return this.dataset?.daily.temperature_2m_min[0].toFixed();
+    return this.forecast().daily.temperature_2m_min[0].toFixed();
   }
 
   getTodayDescription() {
-    let forecaset = this.dataset;
+    let forecaset = this.forecast();
     if (!forecaset) {
         return "";
     }
@@ -72,12 +75,12 @@ export class CardTempDayComponent {
   }
 
   get sunset(){
-    let forecaset = this.dataset;
+    let forecaset = this.forecast();
     if (!forecaset) {
         return "";
     }
-    if(this.dataset?.daily) {
-      let sunset = this.dataset?.daily.sunset[0];
+    if(this.forecast().daily) {
+      let sunset = this.forecast().daily.sunset[0];
       return sunset.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5);
     } else {
       return "";
@@ -85,8 +88,8 @@ export class CardTempDayComponent {
   }
 
   get sunrise(){
-    if(this.dataset?.daily) {
-      let sunrise = this.dataset?.daily.sunrise[0];
+    if(this.forecast().daily) {
+      let sunrise = this.forecast().daily.sunrise[0];
       return sunrise.toLocaleString("pt-BR",{ timeZone: this.citiesStore.getTimeZone() }).split(", ")[1].substring(0,5)
     } else {
       return "";
@@ -94,8 +97,8 @@ export class CardTempDayComponent {
   }
 
   get humidity(){
-    if(this.dataset?.current.relative_humidity_2m) {
-      return this.dataset?.current.relative_humidity_2m;
+    if(this.forecast().current.relative_humidity_2m) {
+      return this.forecast().current.relative_humidity_2m;
     } else {
       return false;
     }
@@ -103,7 +106,7 @@ export class CardTempDayComponent {
 
 
   getMoonPhaseDescription() {
-    let forecaset = this.dataset;
+    let forecaset = this.forecast();
     if (!forecaset) {
         return "";
     }
@@ -111,7 +114,7 @@ export class CardTempDayComponent {
   }
 
   getMoonPhaseEmoji() {
-    let forecaset = this.dataset;
+    let forecaset = this.forecast();
     if (!forecaset) {
         return "";
     }

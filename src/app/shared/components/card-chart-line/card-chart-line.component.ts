@@ -1,124 +1,63 @@
-import { ChangeDetectionStrategy, Component, Input, ViewChild, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
 import {
-  ChartComponent,
-  NgApexchartsModule
-} from "ng-apexcharts";
-import { RawDataResponse } from '../../models/http-generic-response.model';
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  ViewChild,
+  effect,
+  inject,
+  signal,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { RouterOutlet } from "@angular/router";
+import { ChartComponent, NgApexchartsModule } from "ng-apexcharts";
+import { datasetInit } from "../../models/http-generic-response.model";
+import { Card, initialCard } from "../../models/card.model";
+import { Chart } from "../../utils/chart-parser";
+import { dalayEmit } from "../../utils/utils";
 
 @Component({
-  selector: 'app-card-chart-line',
+  selector: "app-card-chart-line",
   standalone: true,
   imports: [CommonModule, RouterOutlet, NgApexchartsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './card-chart-line.component.html',
-  styleUrl: './card-chart-line.component.less'
+  templateUrl: "./card-chart-line.component.html",
+  styleUrl: "./card-chart-line.component.less",
 })
 export class CardLineChartComponent {
+  isLoading = signal(true);
   @ViewChild("chart") chart: ChartComponent;
-  public chartOptions: Partial<any>;
-  @Input() dataset: RawDataResponse;
-  @Input() series: {key: string, description: string}[];
-  @Input() colors: string[];
-  @Input({required: true}) title: string;
-  @Input() subTitle: string;
-
-  constructor(){
-    effect(()=>{})
+  @Input({ required: true, alias: "card" }) set _card(card: Card) {
+    this.card.set(card);
+    this.createChart();
   }
+  card = signal<Card>(initialCard);
+  dataset = signal(datasetInit);
+  chartOptions: Partial<any>;
 
-  ngOnInit(): void {
-    this.createChart(this.dataset, this.getSeries());
-  }
+  createChart() {
+    let chartOptions: Chart = new Chart();
+    chartOptions.chart.type = "line";
+    let colors = this.card().colors;
+    if (colors) {
+      chartOptions.colors = colors;
+    }
 
-  ngOnChanges() {
-    this.createChart(this.dataset, this.getSeries());
-  }   
+    //dalayEmit(chartOptions, this.card().series)
+    // chartOptions.series = this.card().series;
+    chartOptions.xaxis.categories = <any>(
+      Object.values(this.card().categories).map((day: any) =>
+        new Date(day).getFullYear().toString().slice(-2)
+      )
+    );
+    this.chartOptions = chartOptions;
+    /*Object.keys(this.card().series).forEach(key => {
+      debugger
+       dalayEmit(chartOptions, this.card().series[key])
+    });*/
+    chartOptions.series = <any>this.card().series;
 
-  createChart(data: RawDataResponse, series: any){
-    data.date = data.date ? data.date : [];
-    this.chartOptions = {
-      colors: this.colors,
-      series: series,
-      chart: {
-        height: 400,
-        type: "line",
-
-      },
-      annotations: {
-        yaxis: [{
-          y: -50,
-          y2: 0,
-          borderColor: '#000',
-          fillColor: '#9bd2ff',
-          opacity: 0.1,
-
-        },{
-          y: 28,
-          y2: 38,
-          borderColor: '#000',
-          fillColor: '#fff5ba',
-          opacity: 0.1,
-
-        },{
-          y: 38,
-          y2: 70,
-          borderColor: '#000',
-          fillColor: '#ffc3bf',
-          opacity: 0.1,
-
-        }],
-      },
-      dataLabels: {
-        enabled: false
-      },
-      legend: {
-        tooltipHoverFormatter: (val: any, opts: any) => {
-          return (
-            val + " - <strong>" + parseFloat(opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex]).toFixed(1) + "</strong>"
-          );
-        }
-      },
-      
-      xaxis: {
-        labels: {
-          trim: true,
-          hideOverlappingLabels: true,
-          style: {
-            fontSize: '12px',
-            fontFamily: 'Helvetica, Arial, sans-serif',
-            fontWeight: 400,
-            cssClass: 'apexcharts-xaxis-label',
-        },
-        },
-        categories: Object.values(data.date).map((day: any) => new Date(day).getFullYear().toString().slice(-2))
-      },
-      yaxis: {
-        labels: {
-          trim: true,
-          formatter: (value: any) => {
-            let arredondado = Math.round(Math.abs(value)); // Arredonda o número para o inteiro mais próximo
-            arredondado *= Math.sign(value);
-            return arredondado;
-          }
-        },
-      },
-      stroke: {
-        width: 2
-      },
-      grid: {
-        borderColor: "#f1f1f1"
-      }
-    };
-  }
-  
-
-  getSeries() {
-    return this.series.map( item => {
-      return {
-        data: this.dataset[item.key], name: item.description 
-      }
-    });
+    console.log(this.card().series);
+    console.log(chartOptions);
+    this.isLoading.set(false);
   }
 }

@@ -1,5 +1,5 @@
 <div class="card info-card sales-card">
-  <div class="card-body"  *ngIf="dataset">
+  <div class="card-body"  *ngIf="!isLoading()">
     <h5 class="card-title" >Temperature <span>| {{getTodayDescription()}}</span></h5>
     <div class="d-flex row">
       <div class="col-7">

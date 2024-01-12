@@ -1,7 +1,7 @@
 <div class="card">
 
   <div class="card-body">
-    <h5 class="card-title">{{title}} <span>/ {{subTitle}}</span></h5>
+    <h5 class="card-title">{{card().title}} <span *ngIf="card().subtitle">/ {{card().subtitle}}</span></h5>
 
     <div id="chart" *ngIf="chartOptions">
       <apx-chart

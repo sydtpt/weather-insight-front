@@ -7,7 +7,7 @@ import {
 } from "@ngrx/signals";
 import { Observable, lastValueFrom, map, mergeMap, of } from "rxjs";
 import { RawDataStateModel } from "./raw-data.model";
-import { ForecastResponse } from "../../shared/models/forecast-response.model";
+import { ForecastResponse, forecastInit } from "../../shared/models/forecast-response.model";
 import { RawDataResponse } from "../../shared/models/http-generic-response.model";
 import { ReportsService } from "../../shared/services/reports.service";
 
@@ -16,14 +16,7 @@ export function withRawDataMethods() {
     { state: type<RawDataStateModel>() },
     withMethods((state, reportsService = inject(ReportsService)) => ({
       async getHistoricalDDMM(date: Date, city_code?: string) {
-        city_code = city_code ? city_code : state.city().city_code;
-        let call = fetchDataPerDDMM(date, city_code, reportsService, state);
-        let res = await lastValueFrom(call);
-        patchState(state, { isLoading: false });
-        return res;
-      },
-      async getHistoricalDDMM2(date: Date, city_code?: string) {
-        patchState(state, { isLoading: true });
+       
         city_code = city_code ? city_code : state.city().city_code;
         let call = fetchDataPerDDMM(date, city_code, reportsService, state);
         let res = await lastValueFrom(call);
@@ -38,7 +31,6 @@ export function withRawDataMethods() {
       },
 
       getMax(field: string) {
-        debugger
         let values: number[] = Object.values(this[field]);
         return Math.max(...values);
       },
@@ -88,6 +80,7 @@ function fetchDataPerDDMM(
   reportsService: ReportsService,
   state
 ): Observable<RawDataResponse> {
+  
   city_code = city_code !== "" ? city_code : state.city.city_code();
   let call = reportsService.getRawDataPerDay(date, city_code).pipe(
     mergeMap((res: RawDataResponse) => {
@@ -159,7 +152,7 @@ function convertDateToForecast(
   );
   index = index !== undefined ? index : -1;
   if (index < 0) {
-    return new ForecastResponse();
+    return forecastInit;
   }
 
   let temp = {

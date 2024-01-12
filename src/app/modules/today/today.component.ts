@@ -1,16 +1,19 @@
-import { Component, Input, effect, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, effect, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterOutlet } from "@angular/router";
 import { CardMinMaxDayComponent } from "../../shared/components/card-min-max-day/card-min-max-day.component";
 import { CardTempDayComponent } from "../../shared/components/card-temp-day/card-temp-day.component";
 import { FormsModule } from "@angular/forms";
 import { patchState } from "@ngrx/signals";
-import { RawDataResponse } from "../../shared/models/http-generic-response.model";
+import { RawDataResponse, datasetInit } from "../../shared/models/http-generic-response.model";
 import { RawDataStore } from "../../store/raw-data/raw-data.store";
 import { CitiesStore } from "../../store/cities.store";
-import { ForecastResponse } from "../../shared/models/forecast-response.model";
+import { ForecastResponse, forecastInit } from "../../shared/models/forecast-response.model";
 import { CardLineChartComponent } from "../../shared/components/card-chart-line/card-chart-line.component";
 import { CardChartBarComponent } from "../../shared/components/card-chart-bar/card-chart-bar.component";
+import { Card, initialCard } from "../../shared/models/card.model";
+import { datasetToChartSeries } from "../../shared/utils/chart-parser";
+import { of } from "rxjs";
 
 const cards = [
   CardLineChartComponent,
@@ -22,51 +25,39 @@ const cards = [
 @Component({
   selector: "app-today",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterOutlet, FormsModule, ...cards],
   templateUrl: "./today.component.html",
   styleUrl: "./today.component.less",
 })
 export class TodayComponent {
-  date = new Date();
-  formattedDate: string;
-  private readonly maxDate = new Date(this.date);
   rawDataStore = inject(RawDataStore);
   private cityStore = inject(CitiesStore);
-  dataset: RawDataResponse;
-  data2 = signal<number>(0);
+  
+  date = new Date();
+  formattedDate: string;
+  readonly maxDate = new Date(this.date);
 
-  precipitationSeries = [
-    { key: "precipitation_sum", description: "Precipitation" },
-    { key: "rain_sum", description: "Rain" },
-  ];
-  precipitationColors: ['#EA3546', '#F9CE1D', '#4154f1'];
+  
+  // Charts Signal's
+  data =signal<RawDataResponse>(datasetInit);
+  forecast = signal<ForecastResponse>(forecastInit);
+  precipitation = signal<Card>(initialCard);
+  maxTemperature = signal<Card>(initialCard);
+  minTemperature = signal<Card>(initialCard);
 
-
-  temperatureMaxSeries = [
-    { key: "temperature_2m_max", description: "Max" },
-    { key: "apparent_temperature_max", description: "Feels Like" }
-  ];
-  temperatureMaxColors = ['#EA3546', '#F9CE1D', '#4154f1'];
-
-  temperatureMinSeries = [
-    { key: "temperature_2m_max", description: "Max" },
-    { key: "apparent_temperature_max", description: "Feels like" },
-  ];
-  temperatureMinColors = ['#279EFF', '#F9CE1D', '#4154f1'];
-
-
-  forecast: ForecastResponse;
-  // TO DO
-  // temperatureSeries = [{key: "precipitation_sum", description: "precipitation" }, {key: "rain_sum", description: "rain" }];
 
   constructor() {
     effect(() => {
-      
       this.date = this.rawDataStore.date();
-      this.rawDataStore.values();
       this.rawDataStore.getHistoricalDDMM(this.date).then((res) => {
-        this.dataset = res;
-        this.forecast = this.rawDataStore.forecast();
+        let temp = this.rawDataStore.forecast();
+        this.data.set(res);
+        this.forecast.set(temp);
+        this.precipitation.set(this.getPrecipitationCard())
+        this.maxTemperature.set(this.getMaxTemperatureCard())
+        this.minTemperature.set(this.getMinTemperatureCard())
+        patchState(this.rawDataStore, {isLoading: false});
       });
     });
   }
@@ -132,8 +123,58 @@ export class TodayComponent {
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });
     const formattedDate = `${day}, ${month}`;
-    console.log(`Every ${formattedDate} since 1940`)
     return `Every ${formattedDate} since 1940`;
   }
 
+  getPrecipitationCard() {
+    let series = [
+      { key: "precipitation_sum", description: "Precipitation" },
+      { key: "rain_sum", description: "Rain" },
+    ];
+    let card: Card = {
+      date: this.date,
+      title: "Precipitation",
+      subtitle: this.getSubtitleDescription(),
+      categories: this.data().date,
+      series: this.getSeries(series),
+      colors: ['#008FFB', '#FEB019']
+    };
+    return card;
+  }
+
+  getMaxTemperatureCard(): Card {
+    let series = [
+      { key: "temperature_2m_max", description: "Max" },
+      { key: "apparent_temperature_max", description: "Feels Like" },
+    ];
+    let card: Card = {
+      date: this.date,
+      title: "Max temperature",
+      categories: this.data().date,
+      subtitle: this.getSubtitleDescription(),
+      series: this.getSeries(series),
+      colors: ['#EA3546', '#F9CE1D', '#4154f1']
+    };
+    return card;
+  }
+
+  getMinTemperatureCard() {
+    let series = [
+      { key: "temperature_2m_min", description: "Max" },
+      { key: "apparent_temperature_min", description: "Feels Like" },
+    ];
+    let card: Card = {
+      date: this.date,
+      title: "Min temperature",
+      categories: this.data().date,
+      subtitle: this.getSubtitleDescription(),
+      series: this.getSeries(series),
+      colors: ['#279EFF', '#F9CE1D', '#4154f1']
+    };
+    return card;
+  }
+
+  private getSeries(series: {key: string, description}[]) {
+    return datasetToChartSeries(this.data(), series);
+  }
 }

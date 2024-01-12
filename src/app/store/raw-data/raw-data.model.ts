@@ -1,6 +1,6 @@
 import { City } from "../../shared/models/city.model";
-import { ForecastResponse } from "../../shared/models/forecast-response.model";
-import { RawDataResponse } from "../../shared/models/http-generic-response.model";
+import { ForecastResponse, forecastInit } from "../../shared/models/forecast-response.model";
+import { RawDataResponse, datasetInit } from "../../shared/models/http-generic-response.model";
 
 export interface RawDataStateModel {
   date: Date;
@@ -11,9 +11,9 @@ export interface RawDataStateModel {
 };
 export const initialState: RawDataStateModel = {
   date: new Date(),
-  forecast: new ForecastResponse(),
-  values: new RawDataResponse(),
-  isLoading: false,
+  forecast: forecastInit,
+  values: datasetInit,
+  isLoading: true,
   city: {
     city_code: "",
     city_desc: "",

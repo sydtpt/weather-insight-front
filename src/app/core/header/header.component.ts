@@ -1,11 +1,10 @@
 import { Component, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CitiesStore } from '../../store/cities.store';
 import { patchState } from '@ngrx/signals';
 import { RawDataStore } from '../../store/raw-data/raw-data.store';
-
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -16,14 +15,14 @@ import { RawDataStore } from '../../store/raw-data/raw-data.store';
 export class HeaderComponent {
   citiesStore = inject(CitiesStore);
   rawDataStore = inject(RawDataStore);
-  constructor(private router: Router) {
+  constructor(private location: Location) {
   }
 
   changeCity(event) {
     let city_code = event.target.value;
     let city = this.citiesStore.getCityByCode(city_code);
     patchState(this.citiesStore, {selectedCity: city});
-    patchState(this.rawDataStore, {city: city});
-    this.router.navigate([city?.city_code, "/today"]);
+    patchState(this.rawDataStore, {isLoading: true, city: city});
+    this.location.replaceState(`${city?.city_code}/today`);
   }
 }

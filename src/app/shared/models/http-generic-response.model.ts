@@ -1,6 +1,6 @@
 import { ForecastResponse } from "./forecast-response.model";
 
-export class RawDataResponse {
+export interface RawDataResponse {
   apparent_temperature_max: number[];
   apparent_temperature_min: number[];
   apparent_temperature_mean: number[];
@@ -29,9 +29,38 @@ export class RawDataResponse {
   wind_gusts_10m_max?: number[];
   wind_speed_10m_max: number[];
   forecast?: ForecastResponse;
-
-
 }
+
+export let datasetInit = {
+  apparent_temperature_max: [0],
+  apparent_temperature_min: [0],
+  apparent_temperature_mean: [0],
+  date: [new Date()],
+  daylight_duration: [0],
+  et0_fao_evapotranspiration: [0],
+  precipitation_hours: [0],
+  precipitation_probability_max: [0],
+  precipitation_sum: [0],
+  rain_sum: [0],
+  showers_sum: [0],
+  shortwave_radiation_sum: [0],
+  snowfall_sum: [0],
+  solar_radiation_sum: [0],
+  sunrise: [new Date()],
+  sunset: [new Date()],
+  sunshine_duration: [0],
+  temperature_2m_max: [0],
+  temperature_2m_min: [0],
+  temperature_2m_mean: [0],
+  time: [new Date()],
+  uv_index_clear_sky_max: [0],
+  uv_index_max: [0],
+  weather_code: [0],
+  wind_direction_10m_dominant: [0],
+  wind_gusts_10m_max: [0],
+  wind_speed_10m_max: [0],
+}
+
 
 export class Units {
     time = "unixtime";

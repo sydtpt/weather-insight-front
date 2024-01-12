@@ -1,8 +1,4 @@
-@if (rawDataStore.isLoading()) {
-<div class="loading-state">
-  <div class="loader"></div>
-</div>
-}
+
 <div class="pagetitle">
   <div class="d-flex">
     <div class="col-5 col-md-8 ">
@@ -23,47 +19,34 @@
           class="bi bi-arrow-right"></i></button>
     </div>
   </div>
-</div><!-- End Page Title -->
+</div>
 
 <section class="section dashboard">
+  <div class="row">
 
-
-  <div class="row" *ngIf="dataset">
     <div class="col-lg-12">
+
       <div class="row">
         <div class="col-xxl-5 col-md-6">
-          <app-card-temp-day [dataset]="forecast"></app-card-temp-day>
+          <app-card-temp-day [forecast]="forecast()"></app-card-temp-day>
         </div>
         <div class="col-xxl-7 col-md-6">
-          <app-card-min-max-day [dataset]="dataset"></app-card-min-max-day>
+          <app-card-min-max-day [dataset]="data()"></app-card-min-max-day>
         </div>
 
         <div class="col-12">
-          <app-card-chart-line
-            title="Max Temperature" 
-            [subTitle]="getSubtitleDescription()"
-            [dataset]="dataset" 
-            [colors]="temperatureMaxColors"
-            [series]="temperatureMaxSeries"></app-card-chart-line>
+          <app-card-chart-line [card]="maxTemperature()"></app-card-chart-line>
         </div>
 
         <div class="col-12">
-          <app-card-chart-line 
-            title="Min Temperature" 
-            [dataset]="dataset" 
-            [subTitle]="getSubtitleDescription()"
-            [colors]="temperatureMinColors"
-            [series]="temperatureMinSeries"></app-card-chart-line>
+          <app-card-chart-line [card]="minTemperature()"></app-card-chart-line>
         </div>
 
         <div class="col-12">
-          <app-card-chart-bar title="Precipitation" [dataset]="dataset"
-            [series]="precipitationSeries"></app-card-chart-bar>
+          <app-card-chart-bar  [card]="precipitation()"></app-card-chart-bar>
         </div>
 
       </div>
-    </div><!-- End Left side columns -->
-
-
+    </div>
   </div>
 </section>
