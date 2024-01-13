@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, effect, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { RawDataResponse, datasetInit } from '../../models/http-generic-response.model';
@@ -16,10 +16,18 @@ export class CardMinMaxDayComponent {
   dataset =  signal<RawDataResponse>(datasetInit);
   @Input({required: true, alias: "dataset"}) set _dataset(dataset: RawDataResponse) {
     this.dataset.set(dataset);
-    this.isLoading.set(false)
-}
+    this.isLoading.set(false);
+  }
+
+  constructor(){
+    effect(()=>{
+      this.getWeatherRecurrency();
+
+    })
+  }
 
   ngOnInit() {
+    console.log(this.dataset());
   }
 
   getMin(){
@@ -43,5 +51,29 @@ export class CardMinMaxDayComponent {
     );
     return {temp: roundMax, date: new Date(this.dataset().date[maxDayIndex])};
   }
+
+  getWeatherRecurrency() {
+    let grouped = this.groupWeathers(this.dataset().weather_code);
+    console.log(grouped)
+  }
+
+  groupWeathers(array) {
+    const group = {};
+    for (let i = 0; i < array.length; i++) {
+      const key = array[i];
+      if (group[key] !== undefined) {
+        group[key]++;
+      } else {
+        group[key] = 1;
+      }
+    }
+    const grouped: any = [];
+    for (const key in group) {
+      grouped.push([parseInt(key), group[key]]);
+    }
+  
+    return grouped;
+  }
+  
 }
 

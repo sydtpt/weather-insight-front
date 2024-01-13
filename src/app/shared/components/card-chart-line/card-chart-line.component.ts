@@ -10,7 +10,7 @@ import { RouterOutlet } from "@angular/router";
 import { ChartComponent, NgApexchartsModule } from "ng-apexcharts";
 import { datasetInit } from "../../models/http-generic-response.model";
 import { Card, initialCard } from "../../models/card.model";
-import { Chart } from "../../utils/chart-parser";
+import { Chart, TEMPERATURE_MARKS } from "../../utils/chart-parser";
 
 @Component({
   selector: "app-card-chart-line",
@@ -38,12 +38,25 @@ export class CardLineChartComponent {
     if (colors) {
       chartOptions.colors = colors;
     }
-
-    chartOptions.xaxis.categories = <any>(
-      Object.values(this.card().categories).map((day: any) =>
-        new Date(day).getFullYear().toString().slice(-2)
-      )
-    );
+    let dislayTemperatureMarkups = this.card().dislayTemperatureMarkups;
+    if (dislayTemperatureMarkups) {
+      chartOptions["annotations"] = TEMPERATURE_MARKS();
+    }
+    let isDateSerie = this.card().isDateSerie;
+    if (isDateSerie) {
+      chartOptions.xaxis.categories = <any>Object.values(
+        this.card().categories
+      ).map((day: any) => {
+        return day.getTime();
+      });
+      chartOptions.xaxis["type"] = "datetime";
+    } else {
+      chartOptions.xaxis.categories = <any>(
+        Object.values(this.card().categories).map((day: any) =>
+          new Date(day).getFullYear().toString().slice(-2)
+        )
+      );
+    }
     chartOptions.series = <any>this.card().series;
     this.chartOptions = chartOptions;
     /*Object.keys(this.card().series).forEach(key => {

@@ -163,7 +163,7 @@ function convertDateToForecast(
       wind_speed_10m: res.wind_speed_10m_max[index],
       relative_humidity_2m: 0,
       apparent_temperature:
-        (res.temperature_2m_max[index] + res.temperature_2m_min[index]) / 2,
+        (res.apparent_temperature_max[index] + res.apparent_temperature_min[index]) / 2,
 
       cloud_cover: 0,
       interval: 0,

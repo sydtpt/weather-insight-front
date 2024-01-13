@@ -13,84 +13,64 @@ export function datasetToChartSeries(
   return result;
 }
 
-export class Chart  {
-  colors = ['#4154f1', '#F9CE1D', '#4154f1'];
+export class Chart {
+  colors = ["#4154f1", "#F9CE1D", "#4154f1"];
   series = [];
-  chart =
-   {
+  chart = {
     height: 400,
     type: "line",
     animations: {
       enabled: true,
       dynamicAnimation: {
-        speed: 1000
-      }
+        speed: 1000,
+      },
     },
 
     events: {
       animationEnd: function (chartCtx) {
         let series = chartCtx.w.config.series;
         let daly = 10;
-      }
+      },
     },
-  
     toolbar: {
-      show: false
+      show: true,
     },
     zoom: {
-      enabled: false
-    }
-
+      enabled: true,
+    },
   };
 
-  annotations= {
-    yaxis: [{
-      y: -50,
-      y2: 0,
-      borderColor: '#000',
-      fillColor: '#9bd2ff',
-      opacity: 0.1,
-
-    },{
-      y: 28,
-      y2: 38,
-      borderColor: '#000',
-      fillColor: '#fff5ba',
-      opacity: 0.1,
-
-    },{
-      y: 38,
-      y2: 70,
-      borderColor: '#000',
-      fillColor: '#ffc3bf',
-      opacity: 0.1,
-
-    }],
+  dataLabels = {
+    enabled: false,
   };
-  dataLabels= {
-    enabled: false
-  };
+
   legend = {
     tooltipHoverFormatter: (val: any, opts: any) => {
       return (
-        val + " - <strong>" + parseFloat(opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex]).toFixed(2) + "</strong>"
+        val +
+        " - <strong>" +
+        parseFloat(
+          opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex]
+        ).toFixed(2) +
+        "</strong>"
       );
-    }
+    },
   };
-  
+
   xaxis = {
     labels: {
       trim: true,
       hideOverlappingLabels: true,
       style: {
-        fontSize: '12px',
-        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontSize: "12px",
+        fontFamily: "Helvetica, Arial, sans-serif",
         fontWeight: 400,
-        cssClass: 'apexcharts-xaxis-label',
-      }
+        cssClass: "apexcharts-xaxis-label",
+      },
     },
-    categories: []
+    categories: [],
   };
+
   yaxis = {
     labels: {
       trim: true,
@@ -99,13 +79,59 @@ export class Chart  {
         let arredondado = Math.round(Math.abs(value)); // Arredonda o número para o inteiro mais próximo
         arredondado *= Math.sign(value);
         return arredondado;
-      }
+      },
+    },
+  };
+
+  stroke = {
+    curve: "smooth",
+    width: 2.5,
+  };
+
+  grid = {
+    borderColor: "#f1f1f1",
+  };
+}
+export function TEMPERATURE_MARKS() {
+  return {
+    yaxis: [
+      {
+        y: -50,
+        y2: 0,
+        borderColor: "#000",
+        fillColor: "#9bd2ff",
+        opacity: 0.1,
+      },
+      {
+        y: 28,
+        y2: 38,
+        borderColor: "#000",
+        fillColor: "#fff5ba",
+        opacity: 0.1,
+      },
+      {
+        y: 38,
+        y2: 70,
+        borderColor: "#000",
+        fillColor: "#ffc3bf",
+        opacity: 0.1,
+      },
+    ],
+  };
+}
+
+export function getAvarageLine(value) {
+  return {
+    x: value,
+    strokeDashArray: 0,
+    borderColor: '#775DD0',
+    label: {
+      borderColor: '#775DD0',
+      style: {
+        color: '#fff',
+        background: '#775DD0',
+      },
+      text: 'Anno Test',
     }
-  };
-  stroke= {
-    width: 2.5
-  };
-  grid= {
-    borderColor: "#f1f1f1"
   }
 }

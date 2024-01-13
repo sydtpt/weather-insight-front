@@ -1,55 +1,62 @@
 <div class="card info-card sales-card">
-  <div class="card-body"  *ngIf="!isLoading()">
-    <h5 class="card-title" >Temperature <span>| {{getTodayDescription()}}</span></h5>
+  <div class="card-body" *ngIf="!isLoading()">
+
     <div class="d-flex row">
-      <div class="col-7">
-        <div class="d-flex" >
+      <div class="col-6">
+        <h5 class="card-title">Temperature <span>| {{getTodayDescription()}}</span></h5>
+        <div class="d-flex">
           <div class="col-5" style="text-align: -webkit-right;">
-            <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">
-              <span style="font-size: 60px;">{{getEmojyByCodeWeatherCode()}}</span>
+            <div class="card-icon rounded-circle d-flex">
+              <img src="assets/img/5n.svg" />
+              <!--span style="font-size: 60px;">{{getEmojyByCodeWeatherCode()}}</span-->
             </div>
           </div>
-          <div class="col-7 ps-1">
+          <div class="col-7 ps-1 justify-content-center">
             <h6 class="ps-3 fs-1">{{getTemp()}}°</h6>
             <div class=" d-flex">
               <span class="d-flex">🌡️ <h4 class="text-muted fs-5 ps-2 d-flex">{{getFeelsLike()}}°</h4></span>
             </div>
           </div>
         </div>
-        <div class="pt-2" >
+        <div class="pt-2">
         </div>
         <div class="d-flex row ">
-          <h5 class="ps-2 d-flex justify-content-center" *ngIf="getWind()">
-            <div>🍃{{getWind()}} km/h</div>
-          </h5>
-          <div class="d-flex ps-sm-0 ps-md-4">
-            <div class="ps-1">
-              <span style="font-size: 50px;">{{getMoonPhaseEmoji()}}</span>
+          <div class="d-flex row ps-sm-0 ps-md-4">
+            <div class="d-flex justify-content-center align-items-center ">
+              <span class="ps-2 fs-4 text-dark">🔥 {{ getMaxTemp() }}°</span><span class="ps-2 fs-6 text-secondary justify-content-center">
+                🌡️ ({{ getMaxFeelsLike() }}°)</span>
             </div>
-            <div class="col-6 d-flex align-items-center justify-content-left">
-              <h6 class="text-muted text-sx-start ps-4 fs-4">{{getMoonPhaseDescription()}}</h6>
+            <div class="d-flex justify-content-center d-flelx align-items-center ">
+              <span class="ps-2 fs-4 text-dark">❄️ {{ getMinTemp() }}°</span><span class="ps-2 fs-6 text-secondary justify-content-center">
+                🌡️ ({{ getMinFeelsLike() }}°)</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-5 d-flex row align-content-center">
-        <div class="d-flex justify-content-center">
-          🔥<h4 class="ps-2">{{ getMaxTemp() }}° max</h4>
+      <div class="col-6 d-flex row align-content-center pt-4">
+        <div class="d-flex ps-sm-0 ps-md-4">
+          <div class="ps-1">
+            <span style="font-size: 50px;">{{getMoonPhaseEmoji()}}</span>
+          </div>
+          <div class="col-6 d-flex align-items-center justify-content-left">
+            <h6 class="text-muted text-sx-start ps-4 fs-4">{{getMoonPhaseDescription()}}</h6>
+          </div>
         </div>
-        <div class="d-flex justify-content-center">
-          ❄️<h4 class="ps-2">{{ getMinTemp() }}° min</h4>
+
+
+        <div class="d-flex pt-3 justify-content-center" *ngIf="humidity || getWind()">
+          <span class="ps-2 fs-6 align-items-center  text-secondary" *ngIf="humidity">💧 {{humidity}}%</span><span
+            class="ps-2 d-flex fs-6 justify-content-center  text-secondary" *ngIf="getWind()"><span>🍃 {{getWind()}} km/h</span>
+          </span>
         </div>
-        <div class="d-flex justify-content-center" *ngIf="humidity">
-          💧<h4 class="ps-2">{{humidity}}%</h4>
+        <div class="d-flex col  pt-4 justify-content-center">
+          <span class="ps-2   fs-5 align-items-center text-secondary">🌅 {{sunrise}}</span><span
+            class="fs-5 text-bold align-items-center text-dark">&nbsp;/&nbsp;</span><span
+            class="fs-5 align-items-center text-secondary">{{sunset}}&nbsp;🌃</span>
         </div>
-        <div class="d-flex justify-content-center">
-          🌅<h4 class="ps-2">{{sunrise}}</h4>
-        </div>
-        <div class="d-flex justify-content-center">
-          🌃<h4 class="ps-2">{{sunset}}</h4>
-        </div>
+
+
       </div>
-            
     </div>
   </div>
 </div>

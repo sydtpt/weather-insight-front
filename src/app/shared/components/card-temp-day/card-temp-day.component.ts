@@ -53,8 +53,17 @@ export class CardTempDayComponent {
     return this.forecast().daily.temperature_2m_max[0].toFixed();
   }
 
+  getMaxFeelsLike(){
+    return this.forecast().daily.apparent_temperature_max[0].toFixed();
+  }
+
   getMinTemp(){
     return this.forecast().daily.temperature_2m_min[0].toFixed();
+  }
+
+
+  getMinFeelsLike(){
+    return this.forecast().daily.apparent_temperature_min[0].toFixed();
   }
 
   getTodayDescription() {

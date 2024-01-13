@@ -1,19 +1,46 @@
 input {
     max-width: 150px;
     min-width: 135px;
+
 }
+
+input:in-range {
+}
+
 
 .header-filter {
     position: sticky;
     /* padding-top: initial; */
     top: 4px;
     z-index: 1040;
-    -webkit-transition: background-color 1000ms linear;
-    -ms-transition: background-color 1000ms linear;
-    transition: background-color 1000ms linear;
-    color: white;
+    -webkit-transition: background-color 1000ms linear red;
+    -ms-transition: background-color 1000ms linear red;
+    transition: background-color 1000ms linear red;
 }
 
-.myElement.is-pinned {
-    background-color: blue;
-  } 
+
+.range-slider__value {
+    margin-right: 10px;
+    display: inline-block;
+    position: relative;
+    width: 55px;
+    color: white;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 3px;
+    background: #FF9800;
+    padding: 5px 10px;
+    margin-left: 8px;
+
+    &:after {
+        position: absolute;
+        top: 8px;
+        left: -7px;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-right: 7px solid #FF9800;
+        border-bottom: 7px solid transparent;
+        content: '';
+    }
+}

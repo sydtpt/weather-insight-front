@@ -1,5 +1,8 @@
 export interface Card {
+  isDateSerie?: boolean;
   date: Date;
+  dislayTemperatureMarkups?: boolean;
+  dislayAverageLine?: false,
   title: string;
   subtitle?: string;
   series: {data: number, name: string}[];
@@ -8,8 +11,11 @@ export interface Card {
   chartOptions?: Partial<any>;
 }
 
-export let initialCard = {
+export let initialCard: Card = {
   date: new Date(),
+  isDateSerie: false,
+  dislayTemperatureMarkups: false,
+  dislayAverageLine: false,
   title: "",
   subtitle: "",
   categories: [],

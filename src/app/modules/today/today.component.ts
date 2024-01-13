@@ -13,7 +13,7 @@ import { CardLineChartComponent } from "../../shared/components/card-chart-line/
 import { CardChartBarComponent } from "../../shared/components/card-chart-bar/card-chart-bar.component";
 import { Card, initialCard } from "../../shared/models/card.model";
 import { datasetToChartSeries } from "../../shared/utils/chart-parser";
-import { of } from "rxjs";
+import { debounceTime, fromEvent, lastValueFrom, of } from "rxjs";
 
 const cards = [
   CardLineChartComponent,
@@ -31,22 +31,23 @@ const cards = [
   styleUrl: "./today.component.less",
 })
 export class TodayComponent {
+  limitYearFrom = 1970;
   rawDataStore = inject(RawDataStore);
   private cityStore = inject(CitiesStore);
-  values;
   date = new Date();
   formattedDate: string;
   readonly maxDate = new Date(this.date);
 
 
   originalData: RawDataResponse;
-  limitYearFrom = 1940;
   // Charts Signal's
   data =signal<RawDataResponse>(datasetInit);
   forecast = signal<ForecastResponse>(forecastInit);
   precipitation = signal<Card>(initialCard);
   maxTemperature = signal<Card>(initialCard);
   minTemperature = signal<Card>(initialCard);
+  maxWind = signal<Card>(initialCard);
+
 
 
   constructor() {
@@ -59,14 +60,19 @@ export class TodayComponent {
   update() {
     this.date = this.rawDataStore.date();
     this.rawDataStore.getHistoricalDDMM(this.date).then((res) => {
+      setTimeout(() =>{
+        
+        this.limitYears(this.limitYearFrom);
+        this.precipitation.set(this.getPrecipitationCard())
+        this.maxTemperature.set(this.getMaxTemperatureCard())
+        this.minTemperature.set(this.getMinTemperatureCard())
+        this.maxWind.set(this.getWindSpeedCard())
+      },200)
       this.originalData = res;
       let temp = this.rawDataStore.forecast();
       this.data.set(res);
       this.forecast.set(temp);
-      this.limitYears(this.limitYearFrom);
-      this.precipitation.set(this.getPrecipitationCard())
-      this.maxTemperature.set(this.getMaxTemperatureCard())
-      this.minTemperature.set(this.getMinTemperatureCard())
+
       patchState(this.rawDataStore, {isLoading: false});
     });
   }
@@ -75,7 +81,7 @@ export class TodayComponent {
     this.maxDate.setDate(this.date.getDate() + 7);
     this.formattedDate = this.getDateFormatted(this.date);
     let city = this.cityStore.selectedCity();
-    patchState(this.rawDataStore, { date: new Date(), city });
+    patchState(this.rawDataStore, { date: new Date(), city: city });
   }
 
   changeDay(date) {
@@ -95,27 +101,31 @@ export class TodayComponent {
 
   interceptRange(event) {
     let year = parseInt(event.srcElement.value);
-    this.limitYears(year)
+
+    const clicks = of(year)
+    const result = clicks.pipe(debounceTime(1000));
+    result.subscribe(x => console.log(x))
+
+        this.limitYears(year);
+    
   }
 
   limitYears(year: number) {
     let limitAfter = year;
     this.limitYearFrom = limitAfter;
     let dateList = this.originalData.date;
-    let startFrom = dateList.filter(date => date.getFullYear() >= limitAfter).length;
+    let startFrom = dateList.filter(date => date.getFullYear()-1 >= limitAfter).length;
     let dataArray = {...this.originalData};
     let keys = Object.keys(dataArray);
     for (let key of keys) {
-      if (typeof(dataArray[key]) == "object") {
         dataArray[key] = dataArray[key].slice( dataArray[key].length - startFrom, dataArray[key].length)
-      }
-      
     }
-    console.log(dataArray);
     this.data.set(dataArray)
     this.precipitation.set(this.getPrecipitationCard())
     this.maxTemperature.set(this.getMaxTemperatureCard())
     this.minTemperature.set(this.getMinTemperatureCard())
+    this.maxWind.set(this.getWindSpeedCard())
+
   }
 
 
@@ -158,7 +168,7 @@ export class TodayComponent {
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });
     const formattedDate = `${day}, ${month}`;
-    return `Every ${formattedDate} since 1940`;
+    return `Every ${formattedDate} since ${this.limitYearFrom}`;
   }
 
   getPrecipitationCard() {
@@ -169,6 +179,7 @@ export class TodayComponent {
     let card: Card = {
       date: this.date,
       title: "Precipitation",
+      isDateSerie: true,
       subtitle: this.getSubtitleDescription(),
       categories: this.data().date,
       series: this.getSeries(series),
@@ -182,13 +193,16 @@ export class TodayComponent {
       { key: "temperature_2m_max", description: "Max" },
       { key: "apparent_temperature_max", description: "Feels Like" },
     ];
+    
     let card: Card = {
       date: this.date,
       title: "Max temperature",
       categories: this.data().date,
       subtitle: this.getSubtitleDescription(),
       series: this.getSeries(series),
-      colors: ['#EA3546', '#F9CE1D', '#4154f1']
+      isDateSerie: true,
+      colors: ['#EA3546', '#F9CE1D', '#4154f1'],
+      dislayTemperatureMarkups: true
     };
     return card;
   }
@@ -202,15 +216,34 @@ export class TodayComponent {
       date: this.date,
       title: "Min temperature",
       categories: this.data().date,
+      isDateSerie: true,
       subtitle: this.getSubtitleDescription(),
       series: this.getSeries(series),
-      colors: ['#279EFF', '#F9CE1D', '#4154f1']
+      colors: ['#279EFF', '#F9CE1D', '#4154f1'],
+      dislayTemperatureMarkups: true
+    };
+    return card;
+  }
+
+  getWindSpeedCard() {
+    let series = [
+      { key: "wind_speed_10m_max", description: "Max wind speed" }
+    ];
+    let card: Card = {
+      date: this.date,
+      title: "Max wind speed",
+      isDateSerie: true,
+      categories: this.data().date,
+      subtitle: this.getSubtitleDescription(),
+      series: this.getSeries(series),
+      colors: ['#1B998B'],
+      dislayTemperatureMarkups: false
     };
     return card;
   }
 
   private getSeries(series: {key: string, description}[]) {
-    return datasetToChartSeries(this.originalData, series);
+    return datasetToChartSeries(this.data(), series);
   }
 
   dacadeFilters = [];

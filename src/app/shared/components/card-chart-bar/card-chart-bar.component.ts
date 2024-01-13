@@ -40,14 +40,26 @@ export class CardChartBarComponent {
     if (colors) {
       chartOptions.colors = colors;
     }
+
+    let isDateSerie = this.card().isDateSerie;
+    if (isDateSerie) {
+      chartOptions.xaxis.categories = <any>Object.values(
+        this.card().categories
+      ).map((day: any) => {
+        return day.getTime();
+      });
+      
+      chartOptions.xaxis["type"] = "datetime";
+    } else {
+      chartOptions.xaxis.categories = <any>(
+        Object.values(this.card().categories).map((day: any) =>
+          new Date(day).getFullYear().toString().slice(-2)
+        )
+      );
+    }
     /*Object.keys(this.card().series).forEach(key => {
       dalayEmit(chartOptions, this.card().series[key])
     });*/
-    chartOptions.xaxis.categories = <any>(
-      Object.values(this.card().categories).map((day: any) =>
-        new Date(day).getFullYear().toString().slice(-2)
-      )
-    );
     chartOptions.series = <any>this.card().series;
     this.chartOptions = chartOptions;
     this.isLoading.set(false);
