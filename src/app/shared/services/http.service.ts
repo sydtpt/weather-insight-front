@@ -13,17 +13,15 @@ export class HttpService {
     return this.http.get(this.URL + endpoint)
   }
 
+
   getForecast(endpoint: string, opt?): Observable<ForecastResponse> {
     return this.http.get(endpoint).pipe(
       map((res) => {
-        res["current"].time = new Date(res["current"].time * 1000)
-        res["daily"].sunrise = res["daily"].sunrise.map(
-          (i) => new Date(i * 1000)
-        );
-        res["daily"].sunset = res["daily"].sunset.map(
-          (i) => new Date(i * 1000)
-        );
-        res["daily"].time = res["daily"].time.map((i) => new Date(i * 1000));
+        const { current, daily } = <any>res;
+        current.time = new Date(current.time * 1000);
+        daily.sunrise = daily.sunrise.map((i) => new Date(i * 1000));
+        daily.sunset = daily.sunset.map((i) => new Date(i * 1000));
+        daily.time = daily.time.map((i) => new Date(i * 1000));
         return <ForecastResponse>res;
       })
     );

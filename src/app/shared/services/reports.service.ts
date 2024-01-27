@@ -28,31 +28,15 @@ latitude={{lat}}&longitude={{long}}
     let url = `history/${city_code}?dd=${day}&mm=${month}`;
     return this.http.get(url).pipe(
       map((res) => {
-        for (let field of Object.keys(res)) {
-          res[field] = Object.values(res[field]);
+        return Object.keys(res).reduce((acc, field) => {
+          acc[field] = Object.values(res[field]);
 
-          if (field === "date") {
-            res["date"] = Object.values(res[field]).map(
-              (i) => new Date((i as number))
-            );
+          if (field === "date" || field === "sunset" || field === "sunrise" || field === "time") {
+            acc[field] = Object.values(res[field]).map((i) => new Date(i as number));
           }
-          if (field === "sunset") {
-            res["sunset"] = Object.values(res[field]).map(
-              (i) => new Date((i as number))
-            );
-          }
-          if (field === "sunrise") {
-            res["sunrise"] = Object.values(res[field]).map(
-              (i) => new Date((i as number))
-            );
-          }
-          if (field === "time") {
-            res["time"] = Object.values(res[field]).map(
-              (i) => new Date((i as number))
-            );
-          }
-        }
-        return <RawDataResponse>res;
+
+          return acc;
+        }, {}) as RawDataResponse;
       })
     );
   }
