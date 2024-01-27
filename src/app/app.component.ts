@@ -34,15 +34,23 @@ export class AppComponent {
       if(this.citiesStore.isLoading()) {
         return;
       }
-      let urlsData = window.location.href.split("/").filter((e) => e);
-      let city = this.citiesStore.selectCity(urlsData[2]);
-      if (city) {
-        asapScheduler.schedule(() => {
-          patchState(this.citiesStore, {selectedCity: city});
-          this.router.navigate([urlsData[2]]);
-        }); // to fix
-      } else {
-        // this.router.navigateByUrl("/");
+      let urlsData = window.location.href.split("/").filter(Boolean);
+      let cityFromUrl = urlsData[2];
+
+      if (cityFromUrl) {
+        let city = this.citiesStore.selectCity(cityFromUrl);
+        if (city) {
+          asapScheduler.schedule(() => {
+            try {
+              patchState(this.citiesStore, {selectedCity: city});
+              this.router.navigate([cityFromUrl]);
+            } catch (error) {
+              console.error('Navigation error', error);
+            }
+          });
+        } else {
+          // this.router.navigateByUrl("/");
+        }
       }
 
     });

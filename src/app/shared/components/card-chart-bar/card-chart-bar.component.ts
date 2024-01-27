@@ -29,10 +29,10 @@ export class CardChartBarComponent {
     this.card.set(card);
     this.createChart();
   }
+
   card = signal<Card>(initialCard);
   dataset = signal(datasetInit);
   chartOptions: Partial<any>;
-
   createChart() {
     let chartOptions: Chart = new Chart();
     chartOptions.chart.type = "bar";
