@@ -11,15 +11,17 @@
     <div class="col-7 d-flex col-md-9 mt-1 mb-3 mt-1 justify-content-end align-items-center form-group">
 
       <label class="pe-2 text-secondary">Limit years:</label>
-      <input (change)="interceptRange($event)" value="{{limitYearFrom}}" type="range" min="1940" max="2015" step="25"
+      <input (change)="interceptRange($event)" value="{{limitYearFrom}}" type="range" min="1940" max="2015"
         [value]="1970" class="form-range" id="customRange1">
       <span class="range-slider__value">{{limitYearFrom}}</span>
       <button (click)="previousDay()" type="button" class="btn btn-primary btn-sm  d-none d-md-block"><i
           class="bi bi-arrow-left"></i></button>
       <input type="date" min="1941-01-01" max="{{getMaxDayForecast()}}" [ngModel]="formattedDate"
         (ngModelChange)="changeDay($event)" class="form-control ms-1 me-1 w-75">
-      <button (click)="nextDay()" [disabled]="disableNext()" class="btn btn-primary btn-sm  d-none d-md-block"><i
+      <button (click)="nextDay()" [disabled]="disableNext()" class="btn btn-sm btn-primary d-none d-md-block me-3"><i
           class="bi bi-arrow-right"></i></button>
+          <span class="loader" *ngIf="rawDataStore.isLoading()"></span>
+          <span class="loader-inative" *ngIf="!rawDataStore.isLoading()"></span>
     </div>
   </div>
 

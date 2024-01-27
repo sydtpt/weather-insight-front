@@ -5,35 +5,36 @@
       <div class="col-6">
         <h5 class="card-title">Temperature <span>| {{getTodayDescription()}}</span></h5>
         <div class="d-flex">
-          <div class="col-5" style="text-align: -webkit-right;">
-            <div class="card-icon rounded-circle d-flex">
-              <img src="assets/img/5n.svg" />
-              <!--span style="font-size: 60px;">{{getEmojyByCodeWeatherCode()}}</span-->
-            </div>
+          <div class="col-7 justify-content-center d-flex">
+            <img src="{{getImage()}}" style="height: -webkit-fill-available" />
+            <!--span style="font-size: 60px;">{{getEmojyByCodeWeatherCode()}}</span-->
           </div>
-          <div class="col-7 ps-1 justify-content-center">
+          <div class="col-5 ps-1 justify-content-center">
             <h6 class="ps-3 fs-1">{{getTemp()}}°</h6>
-            <div class=" d-flex">
-              <span class="d-flex">🌡️ <h4 class="text-muted fs-5 ps-2 d-flex">{{getFeelsLike()}}°</h4></span>
+            <div class="d-flex">
+              <span class="d-flex fs-4"><i class="bi bi-thermometer-half text-warning"></i>
+                <h4 class="text-muted pt-2 fs-5 d-flex">{{getFeelsLike()}}°</h4>
+              </span>
             </div>
           </div>
         </div>
-        <div class="pt-2">
-        </div>
-        <div class="d-flex row ">
+        <div class="d-flex row pt-3">
           <div class="d-flex row ps-sm-0 ps-md-4">
-            <div class="d-flex justify-content-center align-items-center ">
-              <span class="ps-2 fs-4 text-dark">🔥 {{ getMaxTemp() }}°</span><span class="ps-2 fs-6 text-secondary justify-content-center">
-                🌡️ ({{ getMaxFeelsLike() }}°)</span>
+            <div class="d-flex ps-4 align-items-center ">
+              <span class="ps-2 fs-4 text-dark"><i class="bi bi-arrow-up-circle-fill text-danger"></i> {{ getMaxTemp()
+                }}°</span><span class="ps-2 fs-5 text-secondary justify-content-center">
+                <i class="bi bi-thermometer-high text-danger"></i> ({{ getMaxFeelsLike() }}°)</span>
             </div>
-            <div class="d-flex justify-content-center d-flelx align-items-center ">
-              <span class="ps-2 fs-4 text-dark">❄️ {{ getMinTemp() }}°</span><span class="ps-2 fs-6 text-secondary justify-content-center">
-                🌡️ ({{ getMinFeelsLike() }}°)</span>
+            <div class="d-flex ps-4 align-items-center ">
+              <span class="ps-2 fs-4 text-dark"><i class="bi bi-arrow-down-circle-fill blue"></i> {{
+                getMinTemp()
+                }}°</span><span class="ps-2 fs-5 text-secondary justify-content-center">
+                <i class="bi bi-thermometer blue"></i> ({{ getMinFeelsLike() }}°)</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-6 d-flex row align-content-center pt-4">
+      <div class="col-6 d-flex row align-content-center pt-5">
         <div class="d-flex ps-sm-0 ps-md-4">
           <div class="ps-1">
             <span style="font-size: 50px;">{{getMoonPhaseEmoji()}}</span>
@@ -45,17 +46,22 @@
 
 
         <div class="d-flex pt-3 justify-content-center" *ngIf="humidity || getWind()">
-          <span class="ps-2 fs-6 align-items-center  text-secondary" *ngIf="humidity">💧 {{humidity}}%</span><span
-            class="ps-2 d-flex fs-6 justify-content-center  text-secondary" *ngIf="getWind()"><span>🍃 {{getWind()}} km/h</span>
+          <span class="ps-2 fs-5 align-items-center text-secondary" *ngIf="humidity"><i
+              class="bi bi-droplet-fill blue"></i> {{humidity}}%</span><span
+            class="ps-2 d-flex fs-5 justify-content-center text-secondary" *ngIf="getWind()"><span><i
+                class="bi bi-wind text-success"></i> {{getWind()}} km/h</span>
           </span>
         </div>
-        <div class="d-flex col  pt-4 justify-content-center">
-          <span class="ps-2   fs-5 align-items-center text-secondary">🌅 {{sunrise}}</span><span
-            class="fs-5 text-bold align-items-center text-dark">&nbsp;/&nbsp;</span><span
-            class="fs-5 align-items-center text-secondary">{{sunset}}&nbsp;🌃</span>
+        <div class="d-flex pt-4 justify-content-center">
+          <span class="ps-2  d-flex fs-5 align-items-center text-secondary "><i
+              class="bi text-warning fs-3 bi-sunrise-fill"></i>
+            &nbsp;{{ sunrise | localTime: this.citiesStore.getTimeZone() }}</span>
+          <span class="fs-5 text-bold align-items-center text-dark d-flex">
+            &nbsp;/&nbsp;
+          </span>
+          <span class="fs-5 d-flex align-items-center text-secondary justify-content-center">{{ sunset | localTime: this.citiesStore.getTimeZone() }}&nbsp;<i
+              class="bi fs-5 blue bi-moon-stars-fill"></i></span>
         </div>
-
-
       </div>
     </div>
   </div>

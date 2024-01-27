@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, Input, effect, signal } from '@angu
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { RawDataResponse, datasetInit } from '../../models/http-generic-response.model';
+import { ChartComponent, NgApexchartsModule } from "ng-apexcharts";
 
 @Component({
   selector: 'app-card-min-max-day',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, NgApexchartsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './card-min-max-day.component.html',
   styleUrl: './card-min-max-day.component.less',
@@ -14,6 +15,35 @@ import { RawDataResponse, datasetInit } from '../../models/http-generic-response
 export class CardMinMaxDayComponent {
   isLoading = signal(true);
   dataset =  signal<RawDataResponse>(datasetInit);
+  chartOptions = {
+    series: [44, 55, 13, 43, 22],
+    chart: <any>{
+      type: 'donut',
+      height: 175,
+      width: 175,
+      toolbar: {
+        show: false
+      }
+    },
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200
+        },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }],
+    dataLabels: {
+      enabled: false
+    },
+    labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+    legend: {
+      show: false
+    }
+  }
   @Input({required: true, alias: "dataset"}) set _dataset(dataset: RawDataResponse) {
     this.dataset.set(dataset);
     this.isLoading.set(false);
@@ -22,12 +52,7 @@ export class CardMinMaxDayComponent {
   constructor(){
     effect(()=>{
       this.getWeatherRecurrency();
-
     })
-  }
-
-  ngOnInit() {
-    console.log(this.dataset());
   }
 
   getMin(){

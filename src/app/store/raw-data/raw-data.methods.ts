@@ -153,7 +153,6 @@ function convertDateToForecast(
   if (index < 0) {
     return forecastInit;
   }
-
   let temp = {
     current: {
       time: date,
@@ -194,8 +193,8 @@ function convertDateToForecast(
       // shortwave_radiation_sum: [res.shortwave_radiation_sum[index]],
       // snowfall_sum: [res.snowfall_sum[index]],
       // solar_radiation_sum: [res.solar_radiation_sum[index]],
-      sunrise: [res.sunrise[index]],
-      sunset: [res.sunset[index]],
+      sunrise: [new Date(<any>res.sunrise[index] * 1000)],
+      sunset: [new Date(<any>res.sunset[index] * 1000)],
       // sunshine_duration: [res.sunshine_duration[index]],
       temperature_2m_max: [res.temperature_2m_max[index]],
       temperature_2m_min: [res.temperature_2m_min[index]],

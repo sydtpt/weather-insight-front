@@ -1,34 +1,88 @@
 <div class="card info-card revenue-card">
   <div class="card-body">
     <h5 class="card-title">History <span>| This day</span></h5>
-    <div class="d-flex flex-column" *ngIf="!isLoading() && dataset()">
-
-
-        <div class="d-flex pt-4">
-          <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">
-            <span style="font-size: 60px;">🔥</span>
-          </div>
-          <div  class="ps-2">
-            <h6  class="pt-2">{{ getMax().temp }}°C</h6>
-            <div class=" d-flex">
-              <p class="fw-bold small ps-1">{{getMax().date | date: "mediumDate" }}</p>
+    <div class="d-flex row" *ngIf="!isLoading() && dataset()">
+      <div class="col-6 d-flex row">
+          <div class="d-flex">
+            <div class="">
+              <div class="d-flex align-items-center ">
+                <span class="ps-2 fs-5 text-dark">
+                  <div class="d-flex column align-items-center justify-content-center text-muted fs-6 pb-2">
+                    Temperature
+                  </div>
+                  <i class="bi bi-arrow-up-circle-fill text-danger"></i> 35°
+                  <span class="ps-2 text-muted fs-6 text-dark">In 2014</span>
+                </span>
+                <span class="ps-2 fs-5 text-secondary justify-content-center">
+                </span>
+              </div>
+  
+              <div class="d-flex ps-6 align-items-center ">
+                <span class="ps-2 fs-5 text-dark"><i class="bi bi-circle-fill text-warning"></i> 35°</span>
+                <span class="ps-2 text-muted fs-6 text-dark">Avarage</span>
+              </div>
+  
+              <div class="d-flex align-items-center ">
+                <span class="ps-2 fs-5 text-dark"><i class="bi bi-arrow-down-circle-fill text-primary"></i> 35°</span>
+                <span class="ps-2 text-muted fs-6 text-dark">In 2014</span>
+              </div>
             </div>
-
-          </div>
-      </div>  
-
-
-        <div class="d-flex pt-4">
-          <div class="card-icon rounded-circle d-flex" style="padding-top: 24px;">
-            <span style="font-size: 50px;">❄️</span>
-          </div>
-          <div  class="ps-1">
-            <h6  class="pt-2">{{getMin().temp}}°C</h6>
-            <div class=" d-flex">
-              <p class="fw-bold small ps-1">{{ getMin().date | date: "mediumDate" }}</p>
+            <div class="ps-3">
+              <div class="d-flex align-items-center ">
+    
+                <span class="ps-2 fs-5 text-dark">
+                  <div class="d-flex column align-items-center text-muted fs-6 justify-content-center pb-2">
+                    Feels like
+                  </div>
+                  <i class="bi bi-thermometer-high text-danger"></i> 35°
+                  <span class="ps-2 text-muted fs-6 text-dark">In 2014</span>
+                </span>
+                <span class="ps-2 fs-5 text-secondary justify-content-center">
+                </span>
+              </div>
+    
+              <div class="d-flex align-items-center ">
+                <span class="ps-2 fs-5 text-dark"><i class="bi bi-thermometer-half text-warning"></i> 35°</span>
+                <span class="ps-2 text-muted fs-6 text-dark">Avarage</span>
+              </div>
+    
+              <div class="d-flex align-items-center ">
+                <span class="ps-2 fs-5 text-dark"><i class="bi bi-thermometer text-primary"></i> 35°</span>
+                <span class="ps-2 text-muted fs-6 text-dark">In 2014</span>
+              </div>
             </div>
           </div>
-        </div>
+          <div class="pt-4">
+            <i class="bi bi-umbrella-fill"></i><i class="bi bi-umbrella-fill"></i><i class="bi bi-umbrella-fill"></i><i class="bi bi-umbrella-fill"></i><i class="bi bi-umbrella-fill"></i>
+          </div>
+
+        
+      </div>
+
+      <div class="col-6 ps-0 d-flex row">
+          <apx-chart class="ps-0"
+            [colors]="chartOptions['colors']"
+            [annotations]="chartOptions['annotations']"
+            [series]="chartOptions['series']"
+            [chart]="chartOptions['chart']"
+            [xaxis]="chartOptions['xaxis']"
+            [stroke]="chartOptions['stroke']"
+            [tooltip]="chartOptions['tooltip']"
+            [dataLabels]="chartOptions['dataLabels']"
+            [legend]="chartOptions['legend']"
+            [markers]="chartOptions['markers']"
+            [grid]="chartOptions['grid']"
+            [yaxis]="chartOptions['yaxis']"
+            [title]="chartOptions['title']"
+          ></apx-chart>
+        
+      </div>
+
+
+
+
     </div>
+
+
   </div>
 </div>
