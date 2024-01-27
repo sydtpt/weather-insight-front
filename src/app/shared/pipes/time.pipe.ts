@@ -10,6 +10,6 @@ export class LocalTimePipe implements PipeTransform {
     return sunset
     .toLocaleString("pt-BR", { timeZone: args[0] })
     .split(", ")[1]
-    .substring(0, 5);;
-  }
+    .substring(0, 5);
+    }
 }

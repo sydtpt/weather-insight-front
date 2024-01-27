@@ -16,11 +16,12 @@ emitNext();
 }
 
 
-export function isToday(date: Date) {
-    const today = new Date();
-    if (today.toDateString() === date.toDateString()) {
-      return true;      
-    } else {
-      return false;
-    }
-  }
+/**
+ * Checks if a given date is today.
+ * @param date - The date to check.
+ * @returns True if the date is today, false otherwise.
+ */
+export function isToday(date: Date): boolean {
+  const today = new Date();
+  return today.toDateString() === date.toDateString();
+}
