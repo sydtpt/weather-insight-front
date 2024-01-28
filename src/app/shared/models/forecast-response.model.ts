@@ -24,7 +24,7 @@ export let forecastInit: ForecastResponse = {
     apparent_temperature: 0,
     cloud_cover: 0,
     interval: 0,
-    is_day: 0,
+    is_day: true,
     precipitation: 0,
     pressure_msl: 0,
     rain: 0,
