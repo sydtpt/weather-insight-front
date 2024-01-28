@@ -1,4 +1,4 @@
-import { RawDataResponse, Units, } from "./http-generic-response.model";
+import { Units, } from "./http-generic-response.model";
 
 class CurrentUnits {
   time = "unixtime";
