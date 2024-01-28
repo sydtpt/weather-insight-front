@@ -64,7 +64,7 @@ interface ICurrent {
   apparent_temperature: number;
   cloud_cover: number;
   interval: number;
-  is_day: number;
+  is_day: boolean;
   precipitation: number;
   pressure_msl: number;
   rain: number;

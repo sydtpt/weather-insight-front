@@ -47,7 +47,7 @@ export class CardTempDayComponent {
     return this.forecast().current.apparent_temperature.toFixed();
   }
 
-  getEmojyByCodeWeatherCode(weather_code?) {
+  getEmojyByCodeWeatherCode(weather_code?: number) {
     return weatherCodes[this.forecast().current.weather_code];
   }
 
@@ -93,12 +93,9 @@ export class CardTempDayComponent {
   }
 
   get humidity() {
-    if (this.forecast().current.relative_humidity_2m) {
-      return this.forecast().current.relative_humidity_2m;
-    } else {
-      return this.forecast().current.relative_humidity_2m;
-    }
+    return this.forecast().current.relative_humidity_2m;
   }
+  
 
   getMoonPhaseDescription() {
     return Moon.lunarPhase(this.forecast().current.time);
